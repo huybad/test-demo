@@ -14,7 +14,7 @@ function showToast(message) {
 
 async function request(url, options) {
   const requestOptions = options ?? {};
-  requestOptions.headers = { ...(requestOptions.headers ?? {}), Authorization: `Bearer ${localStorage.getItem('duan2_token') ?? ''}` };
+  requestOptions.headers = { ...(requestOptions.headers ?? {}), Authorization: `Bearer ${localStorage.getItem('testdemo_token') ?? ''}` };
   const response = await fetch(url, requestOptions);
   const data = await response.json();
   if (response.status === 401 || response.status === 403) {
@@ -54,8 +54,8 @@ document.querySelector('#healthCheck').addEventListener('click', async () => { c
 document.querySelector('#runPipeline').addEventListener('click', () => showToast('Pipeline queued in debug mode.'));
 document.querySelector('#clearLogs').addEventListener('click', () => { logsElement.textContent = 'Logs cleared from view.\n'; showToast('Only the admin view was cleared.'); });
 document.querySelector('#copyLogs').addEventListener('click', async () => { await navigator.clipboard.writeText(currentLogs.join('\n')); showToast('Logs copied to clipboard.'); });
-document.querySelector('#exportData').addEventListener('click', () => { const blob = new Blob([JSON.stringify({ deployments: currentDeployments, logs: currentLogs }, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'duan2-admin-snapshot.json'; link.click(); URL.revokeObjectURL(link.href); showToast('Snapshot downloaded.'); });
-document.querySelector('#logoutButton').addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('duan2_token') ?? ''}` } }); localStorage.removeItem('duan2_token'); localStorage.removeItem('duan2_user'); window.location.href = '/auth'; });
-const adminUser = JSON.parse(localStorage.getItem('duan2_user') ?? 'null');
+document.querySelector('#exportData').addEventListener('click', () => { const blob = new Blob([JSON.stringify({ deployments: currentDeployments, logs: currentLogs }, null, 2)], { type: 'application/json' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'testdemo-admin-snapshot.json'; link.click(); URL.revokeObjectURL(link.href); showToast('Snapshot downloaded.'); });
+document.querySelector('#logoutButton').addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('testdemo_token') ?? ''}` } }); localStorage.removeItem('testdemo_token'); localStorage.removeItem('testdemo_user'); window.location.href = '/auth'; });
+const adminUser = JSON.parse(localStorage.getItem('testdemo_user') ?? 'null');
 if (adminUser) document.querySelector('.profile strong').textContent = adminUser.name;
 loadAdminData().catch((error) => showToast(error.message));

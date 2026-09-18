@@ -16,3 +16,10 @@
 .auth-intro h1 { z-index: 3; max-width: 560px; }
 .auth-intro > div:nth-child(2) > p:last-child { position: relative; z-index: 3; }
 .auth-orbit { z-index: 1; right: -180px; bottom: -135px; }
+.auth-orbit { pointer-events: none; }
+@media (min-width: 701px) and (max-width: 900px) {
+	.auth-layout { grid-template-columns: 1fr; }
+	.auth-intro { min-height: 360px; }
+	.auth-card { width: 100%; padding: 42px 8vw; }
+	.auth-orbit { right: -145px; bottom: -180px; }
+}

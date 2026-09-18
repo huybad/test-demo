@@ -16,9 +16,9 @@ const deployments = [
 ];
 const logs = [
   '[09:42:04] deploy: verifying production health checks',
-  '[09:41:48] deploy: container duan2-ci-cd started',
+  '[09:41:48] deploy: container testdemo-ci-cd started',
   '[09:41:31] test: 2 tests passed in 440ms',
-  '[09:40:12] build: image ghcr.io/duan2:8f3a2c1 pushed'
+  '[09:40:12] build: image ghcr.io/testdemo:8f3a2c1 pushed'
 ];
 
 app.disable('x-powered-by');
@@ -92,7 +92,7 @@ app.post('/api/auth/register', async (request, response) => {
   if (users.some((user) => user.email === normalizedEmail)) {
     return response.status(409).json({ error: 'email is already registered' });
   }
-  const user = { id: users.length + 1, name: name.trim(), email: normalizedEmail, role: normalizedEmail === 'admin@duan2.local' ? 'admin' : 'user', passwordHash: await hashPassword(password) };
+  const user = { id: users.length + 1, name: name.trim(), email: normalizedEmail, role: normalizedEmail === 'admin@testdemo.local' ? 'admin' : 'user', passwordHash: await hashPassword(password) };
   users.push(user);
   const token = createSession(user);
   return response.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
@@ -122,7 +122,7 @@ app.post('/api/auth/logout', requireAuth, (request, response) => {
 app.get('/api/admin/overview', requireAuth, requireAdmin, (_request, response) => {
   const deployed = deployments.filter((deployment) => deployment.status === 'deployed').length;
   response.json({
-    service: 'duan2-ci-cd',
+    service: 'testdemo-ci-cd',
     environment: 'production',
     uptime: '99.98%',
     deployments: deployments.length,

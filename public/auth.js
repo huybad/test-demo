@@ -21,8 +21,8 @@ async function submitAuth(payload) {
   const response = await fetch(`/api/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Unable to continue');
-  localStorage.setItem('duan2_token', data.token);
-  localStorage.setItem('duan2_user', JSON.stringify(data.user));
+  localStorage.setItem('testdemo_token', data.token);
+  localStorage.setItem('testdemo_user', JSON.stringify(data.user));
   window.location.href = data.user.role === 'admin' ? '/admin' : '/';
 }
 

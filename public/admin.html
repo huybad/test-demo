@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duan2 Admin</title>
+    <title>TestDemo Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
   <body class="admin-page">
     <div class="app-shell">
       <aside class="sidebar">
-        <a class="brand" href="/"><span class="brand-mark">D2</span><span><strong>duan2</strong><small>admin console</small></span></a>
+        <a class="brand" href="/"><span class="brand-mark">TD</span><span><strong>testdemo</strong><small>admin console</small></span></a>
         <nav class="nav" aria-label="Admin navigation">
           <a class="nav-link" href="/"><span class="nav-icon">⌂</span> Dashboard</a>
           <a class="nav-link active" href="#admin-overview"><span class="nav-icon">⚙</span> Admin tools</a>
@@ -28,7 +28,7 @@
         <section class="admin-grid"><article class="panel admin-form-panel"><div class="panel-heading"><div><p class="eyebrow">RELEASE OPERATOR</p><h2>Create deployment</h2></div><span class="tool-label">POST /api/admin/deployments</span></div><form id="deploymentForm"><label>Release name<input name="release" value="v2.4.2" required></label><label>Commit SHA<input name="commit" value="local-debug" required></label><label>Environment<select name="environment"><option value="staging">Staging</option><option value="production">Production</option></select></label><label>Author<input name="author" value="Huy Tran" required></label><button class="primary-button" type="submit">Queue deployment <span>→</span></button></form></article><article class="panel admin-tools-panel"><div class="panel-heading"><div><p class="eyebrow">OPERATIONS</p><h2>Service tools</h2></div></div><div class="service-tools"><button id="healthCheck"><span>♥</span><strong>Health check</strong><small>Ping service endpoints</small></button><button id="runPipeline"><span>↯</span><strong>Run pipeline</strong><small>Queue a CI workflow</small></button><button id="clearLogs"><span>⌫</span><strong>Clear local logs</strong><small>Reset visible log output</small></button><button id="exportData"><span>↓</span><strong>Export snapshot</strong><small>Download JSON diagnostics</small></button></div></article></section>
         <section class="panel admin-table-panel" id="admin-deployments"><div class="panel-heading"><div><p class="eyebrow">RELEASE CONTROL</p><h2>Manage deployments</h2></div><span class="tool-label">In-memory debug store</span></div><div class="table-wrap"><table><thead><tr><th>Release</th><th>Environment</th><th>Commit</th><th>Author</th><th>Status</th><th>Action</th></tr></thead><tbody id="adminDeployments"></tbody></table></div></section>
         <section class="panel logs-panel" id="admin-logs"><div class="panel-heading"><div><p class="eyebrow">OBSERVABILITY</p><h2>System logs</h2></div><button class="outline-button" id="copyLogs">Copy logs</button></div><pre id="systemLogs">Loading logs...</pre></section>
-        <footer>duan2 admin console <span>•</span> Local operator mode</footer>
+        <footer>testdemo admin console <span>•</span> Local operator mode</footer>
       </main>
     </div>
     <div class="toast" id="toast" role="status"></div>

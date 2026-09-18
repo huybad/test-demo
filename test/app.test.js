@@ -16,10 +16,10 @@ async function registerAdmin(baseUrl) {
   const response = await fetch(`${baseUrl}/api/auth/register`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ name: 'Admin Tester', email: 'admin@duan2.local', password: 'Admin123!' })
+    body: JSON.stringify({ name: 'Admin Tester', email: 'admin@testdemo.local', password: 'Admin123!' })
   });
   if (response.status === 201) return (await response.json()).token;
-  const login = await fetch(`${baseUrl}/api/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: 'admin@duan2.local', password: 'Admin123!' }) });
+  const login = await fetch(`${baseUrl}/api/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: 'admin@testdemo.local', password: 'Admin123!' }) });
   return (await login.json()).token;
 }
 
@@ -33,7 +33,7 @@ test('root endpoint serves the dashboard', () => withServer(async (baseUrl) => {
   const response = await fetch(`${baseUrl}/`);
   assert.equal(response.status, 200);
   assert.match(response.headers.get('content-type'), /text\/html/);
-  assert.match(await response.text(), /Duan2 Deploy Console/);
+  assert.match(await response.text(), /TestDemo Deploy Console/);
 }));
 
 test('admin page and overview endpoint are available', () => withServer(async (baseUrl) => {
