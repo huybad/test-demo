@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bảng điều khiển CI/CD cho Duan2">
+    <title>Duan2 Deploy Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="/" aria-label="Duan2 home">
+          <span class="brand-mark">D2</span>
+          <span><strong>duan2</strong><small>deploy console</small></span>
+        </a>
+        <nav class="nav" aria-label="Điều hướng chính">
+          <a class="nav-link active" href="#overview"><span class="nav-icon">⌂</span> Tổng quan</a>
+          <a class="nav-link" href="#pipelines"><span class="nav-icon">↯</span> Pipelines <b>4</b></a>
+          <a class="nav-link" href="#deployments"><span class="nav-icon">↗</span> Deployments</a>
+          <a class="nav-link" href="#activity"><span class="nav-icon">◷</span> Activity</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="status-card"><span class="status-dot"></span><div><strong>All systems normal</strong><small>Updated just now</small></div></div>
+          <a class="nav-link" href="#settings"><span class="nav-icon">⚙</span> Settings</a>
+          <div class="profile"><span class="avatar">HT</span><div><strong>Huy Tran</strong><small>Administrator</small></div><span>•••</span></div>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar"><div class="crumb">Workspace <span>/</span> <strong>production</strong></div><div class="top-actions"><button class="icon-button" aria-label="Notifications">♢<i></i></button><a class="outline-button" href="/auth">Sign in</a><button class="avatar avatar-small">HT</button></div></header>
+        <section class="hero">
+          <div><p class="eyebrow">FRIDAY, 04 SEP 2026</p><h1>Good morning, Huy.</h1><p class="hero-copy">Your delivery pipeline is clear. Ship something great today.</p></div>
+          <div class="hero-art" role="img" aria-label="Abstract sunrise over a deployment landscape"></div>
+        </section>
+
+        <section class="metrics" aria-label="Deployment metrics">
+          <article class="metric"><div class="metric-head"><span>Deployments</span><span class="trend up">↗ 12.5%</span></div><strong>128</strong><small>Last 30 days</small><div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+          <article class="metric"><div class="metric-head"><span>Success rate</span><span class="trend up">↗ 2.4%</span></div><strong>98.4<span>%</span></strong><small>Last 30 days</small><div class="progress"><i style="width:98.4%"></i></div></article>
+          <article class="metric"><div class="metric-head"><span>Avg. lead time</span><span class="trend down">↘ 8.1%</span></div><strong>14<span>m</span></strong><small>From commit to production</small><div class="lead-line"><span>↓ Faster than last month</span></div></article>
+          <article class="metric"><div class="metric-head"><span>Active branches</span><span class="trend neutral">— 0.0%</span></div><strong>07</strong><small>Currently in progress</small><div class="branch-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
+        </section>
+
+        <section class="content-grid" id="pipelines">
+          <article class="panel pipeline-panel"><div class="panel-heading"><div><p class="eyebrow">LIVE PIPELINE</p><h2>Production release</h2></div><span class="live-pill"><i></i> Running</span></div><div class="pipeline-track"><div class="pipeline-step done"><span>✓</span><strong>Build</strong><small>1m 42s</small></div><div class="track-line done"></div><div class="pipeline-step done"><span>✓</span><strong>Test</strong><small>3m 08s</small></div><div class="track-line current"></div><div class="pipeline-step current"><span>◌</span><strong>Deploy</strong><small>In progress</small></div><div class="track-line"></div><div class="pipeline-step"><span>4</span><strong>Verify</strong><small>Waiting</small></div></div><div class="pipeline-footer"><span>main <b>•</b> #1842</span><span>Started 4 minutes ago</span><button class="text-button" id="viewLogs">View logs <span>→</span></button></div></article>
+          <article class="panel quick-panel"><div class="panel-heading"><div><p class="eyebrow">SHORTCUTS</p><h2>Quick actions</h2></div><span class="kebab">•••</span></div><div class="quick-actions"><button data-action="deployment"><span>↗</span><strong>New deployment</strong><small>Push a release to an environment</small></button><button data-action="pipeline"><span>↯</span><strong>Run pipeline</strong><small>Start a fresh CI/CD workflow</small></button><button data-action="rollback"><span>↶</span><strong>Rollback release</strong><small>Return to a stable version</small></button></div></article>
+        </section>
+
+        <section class="panel deployments-panel" id="deployments"><div class="panel-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Deployments</h2></div><button class="outline-button" id="filterButton">Filter <span>⌄</span></button></div><div class="table-wrap"><table><thead><tr><th>Release</th><th>Environment</th><th>Commit</th><th>Author</th><th>Status</th><th></th></tr></thead><tbody><tr><td><strong>v2.4.1</strong><small>Today, 09:41</small></td><td><span class="env production">●</span> Production</td><td><code>8f3a2c1</code></td><td><span class="table-avatar">HT</span> Huy Tran</td><td><span class="badge success">● Deployed</span></td><td><button class="row-menu" aria-label="Release actions">•••</button></td></tr><tr><td><strong>v2.4.0</strong><small>Yesterday, 16:20</small></td><td><span class="env staging">●</span> Staging</td><td><code>1b9de44</code></td><td><span class="table-avatar blue">AM</span> Alex Morgan</td><td><span class="badge success">● Deployed</span></td><td><button class="row-menu" aria-label="Release actions">•••</button></td></tr><tr><td><strong>v2.3.9</strong><small>Sep 02, 11:05</small></td><td><span class="env production">●</span> Production</td><td><code>ae412c8</code></td><td><span class="table-avatar peach">LN</span> Linh Nguyen</td><td><span class="badge failed">● Failed</span></td><td><button class="row-menu" aria-label="Release actions">•••</button></td></tr></tbody></table></div><button class="load-more" id="loadMore">Load more activity <span>↓</span></button></section>
+        <footer>duan2 deploy console <span>•</span> Built for calm releases</footer>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>

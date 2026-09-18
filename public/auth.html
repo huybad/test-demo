@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duan2 Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body class="auth-page">
+    <main class="auth-layout">
+      <section class="auth-intro"><a class="brand" href="/"><span class="brand-mark">D2</span><span><strong>duan2</strong><small>deploy console</small></span></a><div><p class="eyebrow">DELIVERY WORKSPACE</p><h1>Ship with<br><em>confidence.</em></h1><p>One calm place for releases, health checks and the people behind every deployment.</p></div><div class="auth-orbit"><span>CI</span><i></i><b></b><strong>CD</strong></div></section>
+      <section class="auth-card"><div class="auth-tabs"><button class="auth-tab active" data-mode="login">Sign in</button><button class="auth-tab" data-mode="register">Create account</button></div><div class="auth-heading"><p class="eyebrow" id="authEyebrow">WELCOME BACK</p><h2 id="authTitle">Sign in to your workspace</h2><p id="authDescription">Use your account to continue to the deployment console.</p></div><form id="authForm"><label class="register-only">Full name<input name="name" autocomplete="name" placeholder="Huy Tran"></label><label>Email<input name="email" type="email" autocomplete="email" placeholder="you@company.com" required></label><label>Password<input name="password" type="password" autocomplete="current-password" placeholder="At least 8 characters" minlength="8" required></label><label class="register-only">Confirm password<input name="confirmPassword" type="password" autocomplete="new-password" placeholder="Repeat your password" minlength="8"></label><button class="primary-button" type="submit" id="authSubmit">Sign in <span>→</span></button></form><p class="auth-hint" id="authHint">Local admin demo: register with <strong>admin@duan2.local</strong> to access Admin tools.</p><div class="auth-error" id="authError" role="alert"></div><a class="back-link" href="/">← Back to dashboard</a></section>
+    </main>
+    <script src="/auth.js"></script>
+  </body>
+</html>
