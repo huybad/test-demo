@@ -5,4 +5,16 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in the deployment environment}
+      DATABASE_CA_CERT: /run/secrets/rds-ca
+      ADMIN_NAME: ${ADMIN_NAME:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    secrets:
+      - rds-ca
     restart: unless-stopped
+
+secrets:
+  rds-ca:
+    file: ${RDS_CA_CERT_PATH:?Set RDS_CA_CERT_PATH to the downloaded AWS RDS CA bundle}

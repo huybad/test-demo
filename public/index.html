@@ -3,56 +3,40 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Bảng điều khiển CI/CD cho TestDemo">
-    <title>TestDemo Deploy Console</title>
+    <meta name="description" content="Laptop chính hãng, giá tốt, bảo hành uy tín tại LapZone.">
+    <title>LapZone — Laptop cho mọi hành trình</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
   </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <a class="brand" href="/" aria-label="TestDemo home">
-          <span class="brand-mark">TD</span>
-          <span><strong>testdemo</strong><small>deploy console</small></span>
-        </a>
-        <nav class="nav" aria-label="Điều hướng chính">
-          <a class="nav-link active" href="#overview"><span class="nav-icon">⌂</span> Tổng quan</a>
-          <a class="nav-link" href="#pipelines"><span class="nav-icon">↯</span> Pipelines <b>4</b></a>
-          <a class="nav-link" href="#deployments"><span class="nav-icon">↗</span> Deployments</a>
-          <a class="nav-link" href="#activity"><span class="nav-icon">◷</span> Activity</a>
-        </nav>
-        <div class="sidebar-bottom">
-          <div class="status-card"><span class="status-dot"></span><div><strong>All systems normal</strong><small>Updated just now</small></div></div>
-          <a class="nav-link" href="#settings"><span class="nav-icon">⚙</span> Settings</a>
-          <div class="profile"><span class="avatar">HT</span><div><strong>Huy Tran</strong><small>Administrator</small></div><span>•••</span></div>
-        </div>
-      </aside>
+  <body class="store-page">
+    <div class="store-topline">Giao hàng miễn phí toàn quốc · Bảo hành chính hãng · Trả góp 0%</div>
+    <header class="store-header">
+      <a class="store-brand" href="/" aria-label="LapZone trang chủ"><span class="store-brand-mark">L</span><span>lap<span>zone</span></span></a>
+      <form class="store-search" id="searchForm" role="search"><input id="searchInput" name="q" type="search" placeholder="Bạn đang tìm laptop nào?" aria-label="Tìm kiếm laptop"><button type="submit" aria-label="Tìm kiếm">⌕</button></form>
+      <div class="store-actions"><a class="store-account" id="accountLink" href="/auth"><span>♙</span><span>Tài khoản<small id="accountName">Đăng nhập</small></span></a><button class="store-cart" id="cartButton" type="button"><span>▣</span> Giỏ hàng <b id="cartCount">0</b></button></div>
+    </header>
+    <nav class="store-nav" aria-label="Danh mục laptop"><div class="store-nav-inner"><a href="#products" data-category="all" class="active">Tất cả laptop</a><a href="#products" data-category="student">Sinh viên</a><a href="#products" data-category="office">Văn phòng</a><a href="#products" data-category="business">Doanh nhân</a><a href="#products" data-category="gaming">Gaming</a><a href="#products" data-category="thin">Mỏng nhẹ</a><a href="#products" data-category="creator">Đồ họa</a><a href="#products" data-category="convertible">2-trong-1</a><a class="store-admin-link" id="adminLink" href="/admin" hidden>Quản trị</a></div></nav>
 
-      <main class="main-content" id="overview">
-        <header class="topbar"><div class="crumb">Workspace <span>/</span> <strong>production</strong></div><div class="top-actions"><button class="icon-button" aria-label="Notifications">♢<i></i></button><a class="outline-button" href="/auth">Sign in</a><button class="avatar avatar-small">HT</button></div></header>
-        <section class="hero">
-          <div><p class="eyebrow">FRIDAY, 04 SEP 2026</p><h1>Good morning, Huy.</h1><p class="hero-copy">Your delivery pipeline is clear. Ship something great today.</p></div>
-          <div class="hero-art" role="img" aria-label="Abstract sunrise over a deployment landscape"></div>
-        </section>
+    <main>
+      <section class="store-hero">
+        <div class="store-hero-copy"><p class="store-kicker">LAPTOP CHÍNH HÃNG · ƯU ĐÃI MỖI NGÀY</p><h1>Mở lối<br>hành trình <em>số.</em></h1><p>Chọn chiếc laptop phù hợp với cách bạn học tập, làm việc và sáng tạo.</p><a class="store-hero-cta" href="#products">Khám phá laptop <span>→</span></a><div class="store-hero-note"><span>✓</span> Đổi mới trong 30 ngày <i>·</i> Trả góp 0%</div></div>
+        <div class="store-hero-visual"><div class="hero-orbit"></div><img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=85" alt="Laptop hiện đại trên bàn làm việc"><span class="hero-sticker">TECH<br>YOUR<br>WAY</span><div class="hero-price"><small>LAPTOP CỦA BẠN</small><strong>Bắt đầu từ<br>12.490.000đ</strong></div></div>
+      </section>
 
-        <section class="metrics" aria-label="Deployment metrics">
-          <article class="metric"><div class="metric-head"><span>Deployments</span><span class="trend up">↗ 12.5%</span></div><strong>128</strong><small>Last 30 days</small><div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
-          <article class="metric"><div class="metric-head"><span>Success rate</span><span class="trend up">↗ 2.4%</span></div><strong>98.4<span>%</span></strong><small>Last 30 days</small><div class="progress"><i style="width:98.4%"></i></div></article>
-          <article class="metric"><div class="metric-head"><span>Avg. lead time</span><span class="trend down">↘ 8.1%</span></div><strong>14<span>m</span></strong><small>From commit to production</small><div class="lead-line"><span>↓ Faster than last month</span></div></article>
-          <article class="metric"><div class="metric-head"><span>Active branches</span><span class="trend neutral">— 0.0%</span></div><strong>07</strong><small>Currently in progress</small><div class="branch-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></article>
-        </section>
+      <section class="store-benefits" aria-label="Dịch vụ"><div><span>↗</span><strong>Giao hàng miễn phí</strong><small>Đơn hàng toàn quốc</small></div><div><span>◷</span><strong>Bảo hành chính hãng</strong><small>An tâm sử dụng dài lâu</small></div><div><span>▤</span><strong>Trả góp linh hoạt</strong><small>Thủ tục nhanh chóng</small></div><div><span>♡</span><strong>Hỗ trợ tận tâm</strong><small>Tư vấn chọn máy phù hợp</small></div></section>
 
-        <section class="content-grid" id="pipelines">
-          <article class="panel pipeline-panel"><div class="panel-heading"><div><p class="eyebrow">LIVE PIPELINE</p><h2>Production release</h2></div><span class="live-pill"><i></i> Running</span></div><div class="pipeline-track"><div class="pipeline-step done"><span>✓</span><strong>Build</strong><small>1m 42s</small></div><div class="track-line done"></div><div class="pipeline-step done"><span>✓</span><strong>Test</strong><small>3m 08s</small></div><div class="track-line current"></div><div class="pipeline-step current"><span>◌</span><strong>Deploy</strong><small>In progress</small></div><div class="track-line"></div><div class="pipeline-step"><span>4</span><strong>Verify</strong><small>Waiting</small></div></div><div class="pipeline-footer"><span>main <b>•</b> #1842</span><span>Started 4 minutes ago</span><button class="text-button" id="viewLogs">View logs <span>→</span></button></div></article>
-          <article class="panel quick-panel"><div class="panel-heading"><div><p class="eyebrow">SHORTCUTS</p><h2>Quick actions</h2></div><span class="kebab">•••</span></div><div class="quick-actions"><button data-action="deployment"><span>↗</span><strong>New deployment</strong><small>Push a release to an environment</small></button><button data-action="pipeline"><span>↯</span><strong>Run pipeline</strong><small>Start a fresh CI/CD workflow</small></button><button data-action="rollback"><span>↶</span><strong>Rollback release</strong><small>Return to a stable version</small></button></div></article>
-        </section>
+      <section class="store-products-section" id="products">
+        <div class="store-section-heading"><div><p class="store-kicker">TÌM CHIẾC MÁY CỦA BẠN</p><h2>Laptop nổi bật</h2><p id="resultCount">Đang tải sản phẩm...</p></div><label class="store-sort">Sắp xếp <select id="sortSelect" aria-label="Sắp xếp sản phẩm"><option value="featured">Nổi bật</option><option value="price-asc">Giá thấp đến cao</option><option value="price-desc">Giá cao đến thấp</option><option value="name">Tên A-Z</option></select></label></div>
+        <div class="store-catalog"><aside class="store-filters"><h3>Bộ lọc</h3><label>Thương hiệu<select id="brandFilter"><option value="">Tất cả thương hiệu</option><option>Acer</option><option>Apple</option><option>ASUS</option><option>Dell</option><option>Gigabyte</option><option>HP</option><option>Huawei</option><option>Lenovo</option><option>LG</option><option>Microsoft</option><option>MSI</option><option>Razer</option><option>Samsung</option><option>Xiaomi</option></select></label><label>Khoảng giá<select id="priceFilter"><option value="">Tất cả mức giá</option><option value="15000000">Dưới 15 triệu</option><option value="25000000">Dưới 25 triệu</option><option value="40000000">Dưới 40 triệu</option></select></label><button id="clearFilters" type="button">Xóa bộ lọc</button><div class="filter-promo"><span>GỢI Ý LAPZONE</span><strong>Chọn đúng máy,<br>làm việc hết mình.</strong><small>Đội ngũ tư vấn luôn sẵn sàng hỗ trợ bạn.</small></div></aside><div class="store-results"><div class="store-category-chips"><button class="active" data-category="all">Tất cả</button><button data-category="student">Sinh viên</button><button data-category="office">Văn phòng</button><button data-category="business">Doanh nhân</button><button data-category="gaming">Gaming</button><button data-category="thin">Mỏng nhẹ</button><button data-category="creator">Đồ họa</button><button data-category="convertible">2-trong-1</button></div><div class="product-grid" id="productGrid" aria-live="polite"></div><p class="empty-products" id="emptyProducts" hidden>Không tìm thấy laptop phù hợp. Hãy thử thay đổi bộ lọc nhé.</p></div></div>
+      </section>
+      <section class="store-bottom-banner"><div><p class="store-kicker">CHỌN LAPTOP DỄ DÀNG HƠN</p><h2>Chưa biết bắt đầu từ đâu?</h2><p>Gửi nhu cầu của bạn cho LapZone, chúng tôi sẽ giúp bạn chọn cấu hình phù hợp.</p></div><a href="mailto:hello@lapzone.vn">Nhận tư vấn <span>→</span></a></section>
+    </main>
+    <footer class="store-footer"><a class="store-brand" href="/"><span class="store-brand-mark">L</span><span>lap<span>zone</span></span></a><span>Laptop chính hãng cho mọi hành trình.</span><span>© 2026 LapZone</span></footer>
 
-        <section class="panel deployments-panel" id="deployments"><div class="panel-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Deployments</h2></div><button class="outline-button" id="filterButton">Filter <span>⌄</span></button></div><div class="table-wrap"><table><thead><tr><th>Release</th><th>Environment</th><th>Commit</th><th>Author</th><th>Status</th><th></th></tr></thead><tbody><tr><td><strong>v2.4.1</strong><small>Today, 09:41</small></td><td><span class="env production">●</span> Production</td><td><code>8f3a2c1</code></td><td><span class="table-avatar">HT</span> Huy Tran</td><td><span class="badge success">● Deployed</span></td><td><button class="row-menu" aria-label="Release actions">•••</button></td></tr><tr><td><strong>v2.4.0</strong><small>Yesterday, 16:20</small></td><td><span class="env staging">●</span> Staging</td><td><code>1b9de44</code></td><td><span class="table-avatar blue">AM</span> Alex Morgan</td><td><span class="badge success">● Deployed</span></td><td><button class="row-menu" aria-label="Release actions">•••</button></td></tr><tr><td><strong>v2.3.9</strong><small>Sep 02, 11:05</small></td><td><span class="env production">●</span> Production</td><td><code>ae412c8</code></td><td><span class="table-avatar peach">LN</span> Linh Nguyen</td><td><span class="badge failed">● Failed</span></td><td><button class="row-menu" aria-label="Release actions">•••</button></td></tr></tbody></table></div><button class="load-more" id="loadMore">Load more activity <span>↓</span></button></section>
-        <footer>testdemo deploy console <span>•</span> Built for calm releases</footer>
-      </main>
-    </div>
+    <div class="cart-overlay" id="cartOverlay" hidden></div><aside class="cart-drawer" id="cartDrawer" aria-label="Giỏ hàng" aria-hidden="true"><div class="cart-drawer-heading"><div><p class="store-kicker">LAPZONE</p><h2>Giỏ hàng <span id="drawerCount">(0)</span></h2></div><button id="closeCart" aria-label="Đóng giỏ hàng">×</button></div><div class="cart-items" id="cartItems"></div><div class="cart-empty" id="cartEmpty">Giỏ hàng đang trống.<br>Chọn chiếc laptop yêu thích để bắt đầu nhé!</div><div class="cart-summary"><div><span>Tạm tính</span><strong id="cartSubtotal">0đ</strong></div><small>Phí giao hàng được miễn phí toàn quốc.</small><button class="store-checkout-button" id="checkoutButton">Tiến hành đặt hàng <span>→</span></button></div></aside>
+    <dialog class="checkout-dialog" id="checkoutDialog"><form id="checkoutForm"><div class="checkout-heading"><div><p class="store-kicker">HOÀN TẤT ĐƠN HÀNG</p><h2>Thông tin nhận hàng</h2></div><button type="button" id="closeCheckout" aria-label="Đóng">×</button></div><label>Họ và tên<input name="customerName" autocomplete="name" required maxlength="100" placeholder="Nguyễn Văn A"></label><label>Số điện thoại<input name="phone" type="tel" autocomplete="tel" required minlength="9" maxlength="20" placeholder="09xx xxx xxx"></label><label>Địa chỉ giao hàng<textarea name="address" autocomplete="street-address" required maxlength="300" rows="3" placeholder="Số nhà, đường, phường/xã, tỉnh/thành"></textarea></label><label>Phương thức thanh toán<select name="paymentMethod"><option value="cod">Thanh toán khi nhận hàng (COD)</option><option value="bank-transfer">Chuyển khoản ngân hàng</option></select></label><div class="checkout-total"><span>Tổng thanh toán</span><strong id="checkoutTotal">0đ</strong></div><button class="store-checkout-button" type="submit">Xác nhận đặt hàng</button><p class="checkout-error" id="checkoutError" role="alert"></p></form></dialog>
     <div class="toast" id="toast" role="status"></div>
     <script src="/app.js"></script>
   </body>

@@ -4,3 +4,6 @@ npm-debug.log
 .github
 test
 README.md
+.env
+.env.*
+!.env.example
