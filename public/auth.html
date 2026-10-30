@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Đăng nhập hoặc tạo tài khoản LapZone để quản lý tài khoản mua sắm.">
-    <title>Tài khoản — LapZone</title>
+    <meta name="description" content="Đăng nhập hoặc tạo tài khoản Bếp Xanh để quản lý đơn hàng thực phẩm.">
+    <title>Tài khoản — Bếp Xanh</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body class="auth-page">
     <main class="auth-layout">
-      <section class="auth-intro"><a class="brand" href="/"><span class="brand-mark">L</span><span><strong>lapzone</strong><small>laptop store</small></span></a><div><p class="eyebrow">LAPZONE MEMBERS</p><h1>Chọn máy tốt.<br><em>Đi xa hơn.</em></h1><p>Đăng nhập để tiếp tục mua sắm và nhận tư vấn phù hợp với nhu cầu của bạn.</p></div><div class="auth-orbit" aria-hidden="true"><i></i><b></b><strong>LZ</strong></div></section>
-      <section class="auth-card"><div class="auth-tabs"><button class="auth-tab active" data-mode="login">Đăng nhập</button><button class="auth-tab" data-mode="register">Tạo tài khoản</button></div><div class="auth-heading"><p class="eyebrow" id="authEyebrow">CHÀO MỪNG TRỞ LẠI</p><h2 id="authTitle">Đăng nhập LapZone</h2><p id="authDescription">Sử dụng tài khoản của bạn để tiếp tục.</p></div><form id="authForm"><label class="register-only">Họ và tên<input name="name" autocomplete="name" placeholder="Nguyễn Văn A"></label><label>Email<input name="email" type="email" autocomplete="email" placeholder="ban@email.com" required></label><label>Mật khẩu<input name="password" type="password" autocomplete="current-password" placeholder="Tối thiểu 8 ký tự" minlength="8" required></label><label class="register-only">Xác nhận mật khẩu<input name="confirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" minlength="8"></label><button class="primary-button" type="submit" id="authSubmit">Đăng nhập <span>→</span></button></form><p class="auth-hint" id="authHint">Tạo tài khoản để mua sắm nhanh chóng. Tài khoản quản trị demo: <strong>admin@testdemo.local</strong></p><div class="auth-error" id="authError" role="alert"></div><a class="back-link" href="/">← Quay lại cửa hàng</a></section>
+      <section class="auth-intro"><a class="brand" href="/"><span class="brand-mark">B</span><span><strong>bếp xanh</strong><small>thực phẩm tươi mỗi ngày</small></span></a><div><p class="eyebrow">BẾP XANH THÀNH VIÊN</p><h1>Bữa ngon nhà mình.<br><em>Tươi lành mỗi ngày.</em></h1><p>Đăng nhập để mua sắm nhanh chóng và theo dõi đơn hàng thực phẩm của bạn.</p></div><div class="auth-orbit" aria-hidden="true"><i></i><b></b><strong>BX</strong></div></section>
+      <section class="auth-card"><div class="auth-tabs"><button class="auth-tab active" data-mode="login">Đăng nhập</button><button class="auth-tab" data-mode="register">Tạo tài khoản</button></div><div class="auth-heading"><p class="eyebrow" id="authEyebrow">CHÀO MỪNG TRỞ LẠI</p><h2 id="authTitle">Đăng nhập Bếp Xanh</h2><p id="authDescription">Sử dụng tài khoản của bạn để tiếp tục.</p></div><form id="authForm"><label class="register-only">Họ và tên<input name="name" autocomplete="name"></label><label>Email<input name="email" type="email" autocomplete="email" required></label><label>Mật khẩu<input name="password" type="password" autocomplete="current-password" minlength="8" required></label><label class="register-only">Xác nhận mật khẩu<input name="confirmPassword" type="password" autocomplete="new-password" minlength="8"></label><button class="primary-button" type="submit" id="authSubmit">Đăng nhập <span>→</span></button></form><p class="auth-hint" id="authHint">Đăng nhập để mua sắm và theo dõi tài khoản. Chưa có tài khoản? Chọn “Tạo tài khoản”.</p><div class="auth-error" id="authError" role="alert"></div><a class="back-link" href="/">← Quay lại cửa hàng</a></section>
     </main>
     <script src="/auth.js"></script>
   </body>

@@ -7,9 +7,15 @@ const port = Number(process.env.PORT) || 3000;
 
 const scryptAsync = promisify(scrypt);
 
-if (process.env.ADMIN_EMAIL || process.env.ADMIN_PASSWORD) {
+if (process.env.ADMIN_NAME || process.env.ADMIN_EMAIL || process.env.ADMIN_PASSWORD) {
   if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD || !process.env.ADMIN_NAME) {
     throw new Error('Set ADMIN_NAME, ADMIN_EMAIL and ADMIN_PASSWORD together to provision an admin account.');
+  }
+  if (!/^\S+@\S+\.\S+$/.test(process.env.ADMIN_EMAIL.trim())) {
+    throw new Error('ADMIN_EMAIL must be a valid email address.');
+  }
+  if (!process.env.ADMIN_NAME.trim()) {
+    throw new Error('ADMIN_NAME must not be empty.');
   }
   if (process.env.ADMIN_PASSWORD.length < 12) {
     throw new Error('ADMIN_PASSWORD must contain at least 12 characters.');

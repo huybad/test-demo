@@ -1,10 +1,12 @@
 const toast = document.querySelector('#toast');
 const productsElement = document.querySelector('#adminProducts');
 const ordersElement = document.querySelector('#adminOrders');
+const customersElement = document.querySelector('#adminCustomers');
 const logsElement = document.querySelector('#systemLogs');
 const money = new Intl.NumberFormat('vi-VN');
 let currentProducts = [];
 let currentOrders = [];
+let currentCustomers = [];
 let currentLogs = [];
 let toastTimer;
 
@@ -38,7 +40,7 @@ async function request(url, options = {}) {
 
 function renderProducts() {
   productsElement.innerHTML = currentProducts.map((product) => `<tr>
-    <td><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.processor || 'Laptop')}</small></td>
+    <td><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.origin || product.brand)} · ${escapeHtml(product.unit || product.storage || '')}</small></td>
     <td>${escapeHtml(product.brand)}</td><td>${money.format(product.price)}đ</td>
     <td><input class="inventory-input" type="number" min="0" max="10000" value="${product.stock}" data-stock="${product.id}" aria-label="Tồn kho ${escapeHtml(product.name)}"></td>
     <td><span class="badge ${product.stock ? 'success' : 'failed'}">${product.stock ? 'Còn hàng' : 'Hết hàng'}</span></td>
@@ -69,7 +71,8 @@ function renderOrders() {
     <td>${order.items.map((item) => `${escapeHtml(item.name)} × ${item.quantity}`).join('<br>')}</td>
     <td><strong>${money.format(order.total)}đ</strong></td>
     <td><select class="order-status" data-order-status="${order.id}" aria-label="Trạng thái đơn hàng #${order.id}">${['Mới', 'Đang xử lý', 'Đang giao', 'Hoàn tất', 'Đã hủy'].map((status) => `<option ${status === order.status ? 'selected' : ''}>${status}</option>`).join('')}</select></td>
-    <td><button class="outline-button save-order" type="button" data-save-order="${order.id}">Lưu</button></td>
+    <td><select class="order-status" data-payment-status="${order.id}" aria-label="Trạng thái thanh toán đơn hàng #${order.id}">${['Chưa thanh toán', 'Đã thanh toán', 'Hoàn tiền'].map((status) => `<option ${status === order.paymentStatus ? 'selected' : ''}>${status}</option>`).join('')}</select></td>
+    <td><button class="outline-button save-order" type="button" data-save-order="${order.id}">Lưu giao hàng</button><button class="outline-button save-order" type="button" data-save-payment="${order.id}">Lưu thanh toán</button></td>
   </tr>`).join('');
   ordersElement.querySelectorAll('[data-save-order]').forEach((button) => button.addEventListener('click', async () => {
     const select = ordersElement.querySelector(`[data-order-status="${button.dataset.saveOrder}"]`);
@@ -85,17 +88,46 @@ function renderOrders() {
       showToast(error.message);
     }
   }));
+  ordersElement.querySelectorAll('[data-save-payment]').forEach((button) => button.addEventListener('click', async () => {
+    const select = ordersElement.querySelector(`[data-payment-status="${button.dataset.savePayment}"]`);
+    try {
+      await request(`/api/admin/orders/${button.dataset.savePayment}/payment`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentStatus: select.value })
+      });
+      showToast('Đã cập nhật trạng thái thanh toán.');
+      await loadAdminData();
+    } catch (error) {
+      showToast(error.message);
+    }
+  }));
+}
+
+function renderCustomers() {
+  document.querySelector('#emptyCustomers').hidden = currentCustomers.length > 0;
+  customersElement.innerHTML = currentCustomers.map((customer) => `<tr>
+    <td><strong>${escapeHtml(customer.name)}</strong></td>
+    <td>${escapeHtml(customer.email)}</td>
+    <td>${escapeHtml(customer.phone || '—')}</td>
+    <td>${escapeHtml(customer.address || '—')}</td>
+    <td>${customer.orderCount}</td>
+    <td>${escapeHtml(customer.createdAt || '—')}</td>
+  </tr>`).join('');
 }
 
 async function loadAdminData() {
-  const [productData, orderData, logData] = await Promise.all([
+  const search = document.querySelector('#customerSearchInput').value.trim();
+  const [productData, orderData, logData, customerData] = await Promise.all([
     request('/api/admin/products'),
     request('/api/admin/orders'),
-    request('/api/admin/logs')
+    request('/api/admin/logs'),
+    request(`/api/admin/customers?q=${encodeURIComponent(search)}`)
   ]);
   currentProducts = productData.items;
   currentOrders = orderData.items;
   currentLogs = logData.items;
+  currentCustomers = customerData.items;
   document.querySelector('#productCount').textContent = currentProducts.length;
   document.querySelector('#orderCount').textContent = currentOrders.length;
   document.querySelector('#pendingCount').textContent = currentOrders.filter((order) => order.status === 'Mới' || order.status === 'Đang xử lý').length;
@@ -103,6 +135,7 @@ async function loadAdminData() {
   logsElement.textContent = currentLogs.join('\n');
   renderProducts();
   renderOrders();
+  renderCustomers();
 }
 
 document.querySelector('#productForm').addEventListener('submit', async (event) => {
@@ -122,7 +155,7 @@ document.querySelector('#productForm').addEventListener('submit', async (event) 
       body: JSON.stringify(product)
     });
     form.reset();
-    showToast('Đã thêm laptop vào danh mục.');
+    showToast('Đã thêm thực phẩm vào danh mục.');
     await loadAdminData();
   } catch (error) {
     showToast(error.message);
@@ -130,6 +163,10 @@ document.querySelector('#productForm').addEventListener('submit', async (event) 
 });
 
 document.querySelector('#refreshAdmin').addEventListener('click', () => loadAdminData().then(() => showToast('Dữ liệu đã được làm mới.')).catch((error) => showToast(error.message)));
+document.querySelector('#customerSearchForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  loadAdminData().catch((error) => showToast(error.message));
+});
 document.querySelector('#copyLogs').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(currentLogs.join('\n'));
@@ -140,10 +177,10 @@ document.querySelector('#copyLogs').addEventListener('click', async () => {
   }
 });
 document.querySelector('#exportData').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify({ products: currentProducts, orders: currentOrders, logs: currentLogs }, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify({ products: currentProducts, orders: currentOrders, customers: currentCustomers, logs: currentLogs }, null, 2)], { type: 'application/json' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = 'lapzone-store-snapshot.json';
+  link.download = 'bep-xanh-store-snapshot.json';
   link.click();
   URL.revokeObjectURL(link.href);
 });

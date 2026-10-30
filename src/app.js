@@ -12,11 +12,18 @@ import {
   findProduct,
   findUserByEmail,
   getProducts,
+  getAccountBenefits,
+  getAccountProfile,
   getSessionUser,
   initializeDatabase,
+  listCustomers,
   listOrders,
+  listUserOrders,
   listProducts,
+  markAccountNotificationRead,
   updateOrderStatus,
+  updateOrderPaymentStatus,
+  updateAccountProfile,
   updateProduct
 } from './database.js';
 
@@ -28,42 +35,95 @@ const deployments = [
   { id: 2, release: 'v2.4.0', environment: 'staging', commit: '1b9de44', author: 'Alex Morgan', status: 'deployed', createdAt: 'Yesterday, 16:20' },
   { id: 3, release: 'v2.3.9', environment: 'production', commit: 'ae412c8', author: 'Linh Nguyen', status: 'failed', createdAt: 'Sep 02, 11:05' }
 ];
+const imageByProduct = {
+  'Rau cải ngọt': 'https://images.pexels.com/photos/12150346/pexels-photo-12150346.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Cà chua chín cây': 'https://images.pexels.com/photos/29479888/pexels-photo-29479888.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Cà rốt Đà Lạt': 'https://images.pexels.com/photos/1306559/pexels-photo-1306559.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Bông cải xanh': 'https://images.pexels.com/photos/7676044/pexels-photo-7676044.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Rau muống sạch': 'https://images.pexels.com/photos/13768938/pexels-photo-13768938.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Khoai tây vàng': 'https://images.pexels.com/photos/36400786/pexels-photo-36400786.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Dưa leo baby': 'https://images.pexels.com/photos/39490165/pexels-photo-39490165.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Ớt chuông ba màu': 'https://images.pexels.com/photos/35525568/pexels-photo-35525568.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Xà lách thủy canh': 'https://images.pexels.com/photos/28524414/pexels-photo-28524414.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Nấm đùi gà': 'https://images.pexels.com/photos/17630122/pexels-photo-17630122.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Táo Fuji nhập khẩu': 'https://images.pexels.com/photos/39309054/pexels-photo-39309054.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Cam sành mọng nước': 'https://images.pexels.com/photos/38322939/pexels-photo-38322939.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Chuối già Nam Mỹ': 'https://images.pexels.com/photos/30893278/pexels-photo-30893278.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Dâu tây Đà Lạt': 'https://images.pexels.com/photos/18018686/pexels-photo-18018686.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Bơ sáp Tây Nguyên': 'https://images.pexels.com/photos/27462724/pexels-photo-27462724.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Xoài cát Hòa Lộc': 'https://images.pexels.com/photos/37816783/pexels-photo-37816783.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Thịt heo ba rọi': 'https://images.pexels.com/photos/10647859/pexels-photo-10647859.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Ức gà tươi': 'https://images.pexels.com/photos/8251004/pexels-photo-8251004.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Trứng gà ta': 'https://images.pexels.com/photos/4110225/pexels-photo-4110225.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Thịt bò Úc nhập khẩu': 'https://images.pexels.com/photos/33157191/pexels-photo-33157191.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Cá hồi phi lê': 'https://images.pexels.com/photos/28161760/pexels-photo-28161760.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Tôm sú tươi': 'https://images.pexels.com/photos/5273798/pexels-photo-5273798.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Cá basa phi lê': 'https://images.pexels.com/photos/4619577/pexels-photo-4619577.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Mực ống làm sạch': 'https://images.pexels.com/photos/30648997/pexels-photo-30648997.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Sữa tươi thanh trùng': 'https://images.pexels.com/photos/4578396/pexels-photo-4578396.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Sữa chua ăn tự nhiên': 'https://images.pexels.com/photos/373882/pexels-photo-373882.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Phô mai lát': 'https://images.pexels.com/photos/36570893/pexels-photo-36570893.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Bơ lạt': 'https://images.pexels.com/photos/7966386/pexels-photo-7966386.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Gạo ST25 thơm ngon': 'https://images.pexels.com/photos/36346840/pexels-photo-36346840.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Yến mạch nguyên hạt': 'https://images.pexels.com/photos/5988273/pexels-photo-5988273.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Đậu xanh nguyên vỏ': 'https://images.pexels.com/photos/18358654/pexels-photo-18358654.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Mật ong hoa cà phê': 'https://images.pexels.com/photos/4921856/pexels-photo-4921856.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Dầu ô liu nguyên chất': 'https://images.pexels.com/photos/25745506/pexels-photo-25745506.jpeg?auto=compress&cs=tinysrgb&w=900',
+  'Hạt điều rang muối': 'https://images.pexels.com/photos/6730156/pexels-photo-6730156.jpeg?auto=compress&cs=tinysrgb&w=900'
+};
 const products = [
-  { id: 1, name: 'MacBook Air 13 M3', brand: 'Apple', category: 'thin', price: 27990000, originalPrice: 29990000, processor: 'Apple M3', memory: '16GB', storage: '512GB SSD', display: '13.6 inch', stock: 12, badge: 'Bán chạy', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' },
-  { id: 2, name: 'ASUS Vivobook 15 OLED', brand: 'ASUS', category: 'office', price: 16990000, originalPrice: 18990000, processor: 'Intel Core i5', memory: '16GB', storage: '512GB SSD', display: '15.6 inch OLED', stock: 18, badge: 'Giảm 2 triệu', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 3, name: 'Dell Inspiron 14 Plus', brand: 'Dell', category: 'office', price: 21990000, originalPrice: 23990000, processor: 'Intel Core Ultra 5', memory: '16GB', storage: '512GB SSD', display: '14 inch 2.2K', stock: 9, badge: 'Mới về', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 4, name: 'Lenovo LOQ 15IRX9', brand: 'Lenovo', category: 'gaming', price: 24990000, originalPrice: 26990000, processor: 'Intel Core i7', memory: '16GB', storage: '512GB SSD', display: '15.6 inch 144Hz', stock: 7, badge: 'Gaming', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=900&q=80' },
-  { id: 5, name: 'HP Pavilion Aero 13', brand: 'HP', category: 'thin', price: 18490000, originalPrice: 19990000, processor: 'AMD Ryzen 7', memory: '16GB', storage: '512GB SSD', display: '13.3 inch WUXGA', stock: 14, badge: 'Mỏng nhẹ', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 6, name: 'MSI Katana 15 B13V', brand: 'MSI', category: 'gaming', price: 32990000, originalPrice: 35990000, processor: 'Intel Core i7', memory: '16GB', storage: '1TB SSD', display: '15.6 inch 144Hz', stock: 5, badge: 'RTX 4060', image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=900&q=80' },
-  { id: 7, name: 'MacBook Pro 14 M3', brand: 'Apple', category: 'creator', price: 42990000, originalPrice: 45990000, processor: 'Apple M3', memory: '18GB', storage: '512GB SSD', display: '14.2 inch Liquid Retina', stock: 4, badge: 'Đồ họa chuyên nghiệp', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' },
-  { id: 8, name: 'ASUS Zenbook 14 OLED', brand: 'ASUS', category: 'creator', price: 28990000, originalPrice: 30990000, processor: 'Intel Core Ultra 7', memory: '16GB', storage: '1TB SSD', display: '14 inch 2.8K OLED', stock: 8, badge: 'OLED 2.8K', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 9, name: 'Acer Aspire 5 A515', brand: 'Acer', category: 'office', price: 14990000, originalPrice: 16490000, processor: 'Intel Core i5', memory: '16GB', storage: '512GB SSD', display: '15.6 inch FHD', stock: 11, badge: 'Văn phòng', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 10, name: 'Acer Nitro V 15', brand: 'Acer', category: 'gaming', price: 23990000, originalPrice: 25990000, processor: 'Intel Core i7 · RTX 4050', memory: '16GB', storage: '512GB SSD', display: '15.6 inch 165Hz', stock: 6, badge: 'RTX 4050', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=900&q=80' },
-  { id: 11, name: 'Gigabyte G6X 9KG', brand: 'Gigabyte', category: 'gaming', price: 31990000, originalPrice: 34990000, processor: 'Intel Core i7 · RTX 4060', memory: '16GB', storage: '1TB SSD', display: '16 inch 165Hz', stock: 4, badge: 'Gaming mạnh mẽ', image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=900&q=80' },
-  { id: 12, name: 'Samsung Galaxy Book4', brand: 'Samsung', category: 'thin', price: 22990000, originalPrice: 24990000, processor: 'Intel Core 7', memory: '16GB', storage: '512GB SSD', display: '15.6 inch AMOLED', stock: 7, badge: 'AMOLED', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 13, name: 'Huawei MateBook D 16', brand: 'Huawei', category: 'office', price: 17990000, originalPrice: 19490000, processor: 'Intel Core i5', memory: '16GB', storage: '512GB SSD', display: '16 inch IPS', stock: 10, badge: 'Màn hình lớn', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 14, name: 'LG gram 14 2-in-1', brand: 'LG', category: 'thin', price: 32990000, originalPrice: 35990000, processor: 'Intel Core Ultra 5', memory: '16GB', storage: '512GB SSD', display: '14 inch cảm ứng', stock: 3, badge: 'Siêu nhẹ', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' },
-  { id: 15, name: 'Xiaomi RedmiBook Pro 15', brand: 'Xiaomi', category: 'creator', price: 21990000, originalPrice: 23990000, processor: 'AMD Ryzen 7', memory: '16GB', storage: '512GB SSD', display: '15.6 inch 3.2K', stock: 8, badge: 'Màn hình 3.2K', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 16, name: 'Razer Blade 14', brand: 'Razer', category: 'gaming', price: 59990000, originalPrice: 64990000, processor: 'AMD Ryzen 9 · RTX 4070', memory: '32GB', storage: '1TB SSD', display: '14 inch QHD+ 240Hz', stock: 2, badge: 'Gaming cao cấp', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=900&q=80' },
-  { id: 17, name: 'Lenovo IdeaPad Slim 3', brand: 'Lenovo', category: 'student', price: 12990000, originalPrice: 14490000, processor: 'AMD Ryzen 5', memory: '16GB', storage: '512GB SSD', display: '15.6 inch FHD', stock: 15, badge: 'Sinh viên · Giá tốt', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 18, name: 'HP 15s Ryzen 5', brand: 'HP', category: 'student', price: 13990000, originalPrice: 15490000, processor: 'AMD Ryzen 5', memory: '16GB', storage: '512GB SSD', display: '15.6 inch FHD', stock: 13, badge: 'Học tập', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 19, name: 'ASUS Vivobook Go 14', brand: 'ASUS', category: 'student', price: 11990000, originalPrice: 12990000, processor: 'AMD Ryzen 5', memory: '16GB', storage: '512GB SSD', display: '14 inch FHD', stock: 10, badge: 'Gọn nhẹ · Học tập', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 20, name: 'Acer Aspire Lite 14', brand: 'Acer', category: 'student', price: 10990000, originalPrice: 11990000, processor: 'Intel Core i3', memory: '8GB', storage: '512GB SSD', display: '14 inch FHD', stock: 9, badge: 'Phổ thông', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 21, name: 'Dell Vostro 14 3430', brand: 'Dell', category: 'business', price: 18990000, originalPrice: 20490000, processor: 'Intel Core i5', memory: '16GB', storage: '512GB SSD', display: '14 inch FHD', stock: 7, badge: 'Doanh nghiệp', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 22, name: 'Lenovo ThinkPad E14 Gen 6', brand: 'Lenovo', category: 'business', price: 23990000, originalPrice: 25990000, processor: 'Intel Core Ultra 5', memory: '16GB', storage: '512GB SSD', display: '14 inch WUXGA', stock: 5, badge: 'Bàn phím ThinkPad', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 23, name: 'HP ProBook 440 G11', brand: 'HP', category: 'business', price: 24990000, originalPrice: 26990000, processor: 'Intel Core Ultra 5', memory: '16GB', storage: '512GB SSD', display: '14 inch WUXGA', stock: 4, badge: 'Bảo mật doanh nghiệp', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 24, name: 'ASUS ExpertBook B1', brand: 'ASUS', category: 'business', price: 17990000, originalPrice: 19490000, processor: 'Intel Core i5', memory: '16GB', storage: '512GB SSD', display: '15.6 inch FHD', stock: 6, badge: 'Văn phòng chuyên nghiệp', image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=900&q=80' },
-  { id: 25, name: 'ASUS TUF Gaming A15', brand: 'ASUS', category: 'gaming', price: 27990000, originalPrice: 29990000, processor: 'AMD Ryzen 7 · RTX 4060', memory: '16GB', storage: '512GB SSD', display: '15.6 inch 144Hz', stock: 5, badge: 'RTX 4060', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=900&q=80' },
-  { id: 26, name: 'Lenovo Legion Slim 5', brand: 'Lenovo', category: 'gaming', price: 36990000, originalPrice: 39990000, processor: 'AMD Ryzen 7 · RTX 4060', memory: '16GB', storage: '1TB SSD', display: '16 inch 165Hz', stock: 3, badge: 'Gaming hiệu năng cao', image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=900&q=80' },
-  { id: 27, name: 'HP Victus 16', brand: 'HP', category: 'gaming', price: 26990000, originalPrice: 28990000, processor: 'Intel Core i7 · RTX 4050', memory: '16GB', storage: '512GB SSD', display: '16.1 inch 144Hz', stock: 5, badge: 'Gaming đa dụng', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=900&q=80' },
-  { id: 28, name: 'MSI Cyborg 15', brand: 'MSI', category: 'gaming', price: 22990000, originalPrice: 24990000, processor: 'Intel Core i7 · RTX 4050', memory: '16GB', storage: '512GB SSD', display: '15.6 inch 144Hz', stock: 6, badge: 'Gaming mỏng nhẹ', image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=900&q=80' },
-  { id: 29, name: 'Acer Predator Helios Neo 16', brand: 'Acer', category: 'gaming', price: 38990000, originalPrice: 41990000, processor: 'Intel Core i7 · RTX 4070', memory: '16GB', storage: '1TB SSD', display: '16 inch 165Hz', stock: 3, badge: 'Predator · RTX 4070', image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=900&q=80' },
-  { id: 30, name: 'Lenovo Yoga 7 2-in-1', brand: 'Lenovo', category: 'convertible', price: 27990000, originalPrice: 29990000, processor: 'AMD Ryzen 7', memory: '16GB', storage: '1TB SSD', display: '14 inch cảm ứng OLED', stock: 4, badge: 'Xoay gập 360°', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' },
-  { id: 31, name: 'ASUS Vivobook S 14 Flip', brand: 'ASUS', category: 'convertible', price: 21990000, originalPrice: 23990000, processor: 'Intel Core i5', memory: '16GB', storage: '512GB SSD', display: '14 inch cảm ứng OLED', stock: 4, badge: 'Màn hình cảm ứng', image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=900&q=80' },
-  { id: 32, name: 'Microsoft Surface Laptop 7', brand: 'Microsoft', category: 'thin', price: 34990000, originalPrice: 37990000, processor: 'Snapdragon X Plus', memory: '16GB', storage: '512GB SSD', display: '13.8 inch PixelSense', stock: 3, badge: 'Copilot+ PC', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' },
-  { id: 33, name: 'Microsoft Surface Pro 11', brand: 'Microsoft', category: 'convertible', price: 31990000, originalPrice: 34990000, processor: 'Snapdragon X Plus', memory: '16GB', storage: '512GB SSD', display: '13 inch cảm ứng OLED', stock: 2, badge: 'Tablet 2-in-1', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' },
-  { id: 34, name: 'Dell XPS 14', brand: 'Dell', category: 'creator', price: 52990000, originalPrice: 56990000, processor: 'Intel Core Ultra 7', memory: '32GB', storage: '1TB SSD', display: '14.5 inch OLED', stock: 2, badge: 'Cao cấp · Sáng tạo', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' }
-];
+  ['Rau cải ngọt', 'vegetables', 18000, 22000, 42, 'Nông trại Đà Lạt', '500g', 'Đà Lạt', 'Rau mới thu hoạch'],
+  ['Cà chua chín cây', 'vegetables', 25000, 30000, 36, 'Vườn Nhà Mình', '1kg', 'Lâm Đồng', 'Tươi mỗi ngày'],
+  ['Cà rốt Đà Lạt', 'vegetables', 22000, 26000, 30, 'Nông trại Đà Lạt', '1kg', 'Đà Lạt', 'Giàu vitamin A'],
+  ['Bông cải xanh', 'vegetables', 35000, 42000, 24, 'Nông trại Đà Lạt', '500g', 'Đà Lạt', 'Rau hữu cơ'],
+  ['Rau muống sạch', 'vegetables', 15000, 18000, 50, 'Vườn Nhà Mình', '500g', 'TP. Hồ Chí Minh', 'Thu hoạch sáng nay'],
+  ['Khoai tây vàng', 'vegetables', 28000, 32000, 28, 'Nông sản Tây Nguyên', '1kg', 'Đắk Lắk', 'Củ chắc, bùi ngon'],
+  ['Dưa leo baby', 'vegetables', 20000, 24000, 32, 'Vườn Nhà Mình', '500g', 'Lâm Đồng', 'Giòn ngọt'],
+  ['Ớt chuông ba màu', 'vegetables', 39000, 45000, 20, 'Nông trại Đà Lạt', '500g', 'Đà Lạt', 'Combo nhiều màu'],
+  ['Xà lách thủy canh', 'vegetables', 32000, 38000, 25, 'Vườn Xanh Farm', '300g', 'Đà Lạt', 'Chuẩn VietGAP'],
+  ['Nấm đùi gà', 'vegetables', 29000, 34000, 22, 'Nấm sạch Việt', '300g', 'TP. Hồ Chí Minh', 'Đóng gói trong ngày'],
+  ['Táo Fuji nhập khẩu', 'fruits', 68000, 78000, 40, 'Trái Cây Tươi', '1kg', 'Nhật Bản', 'Ngọt giòn'],
+  ['Cam sành mọng nước', 'fruits', 35000, 42000, 38, 'Vườn Miền Tây', '1kg', 'Vĩnh Long', 'Ép nước rất ngon'],
+  ['Chuối già Nam Mỹ', 'fruits', 32000, 38000, 34, 'Trái Cây Tươi', '1 nải', 'Ecuador', 'Chín tự nhiên'],
+  ['Dâu tây Đà Lạt', 'fruits', 85000, 99000, 18, 'Nông trại Đà Lạt', '250g', 'Đà Lạt', 'Hái trong ngày'],
+  ['Bơ sáp Tây Nguyên', 'fruits', 55000, 65000, 26, 'Nông sản Tây Nguyên', '1kg', 'Đắk Lắk', 'Dẻo thơm'],
+  ['Xoài cát Hòa Lộc', 'fruits', 72000, 85000, 21, 'Vườn Miền Tây', '1kg', 'Tiền Giang', 'Đặc sản miền Tây'],
+  ['Thịt heo ba rọi', 'meat', 145000, 159000, 16, 'Thực phẩm An Tâm', '500g', 'TP. Hồ Chí Minh', 'Kiểm dịch an toàn'],
+  ['Ức gà tươi', 'meat', 69000, 79000, 22, 'Thực phẩm An Tâm', '500g', 'Đồng Nai', 'Ít mỡ, giàu đạm'],
+  ['Trứng gà ta', 'meat', 38000, 45000, 30, 'Trang trại Bình Minh', '10 quả', 'Bình Dương', 'Gà thả vườn'],
+  ['Thịt bò Úc nhập khẩu', 'meat', 189000, 210000, 12, 'Thực phẩm An Tâm', '500g', 'Úc', 'Mềm ngon, chuẩn lạnh'],
+  ['Cá hồi phi lê', 'seafood', 175000, 199000, 10, 'Hải sản Biển Xanh', '300g', 'Na Uy', 'Bảo quản lạnh'],
+  ['Tôm sú tươi', 'seafood', 155000, 179000, 14, 'Hải sản Biển Xanh', '500g', 'Cà Mau', 'Tôm tươi loại 1'],
+  ['Cá basa phi lê', 'seafood', 52000, 62000, 19, 'Hải sản Biển Xanh', '500g', 'Đồng Tháp', 'Thịt cá mềm ngọt'],
+  ['Mực ống làm sạch', 'seafood', 135000, 155000, 11, 'Hải sản Biển Xanh', '500g', 'Phú Quốc', 'Sơ chế sạch'],
+  ['Sữa tươi thanh trùng', 'dairy', 38000, 44000, 35, 'Trang trại Mộc Châu', '1 lít', 'Mộc Châu', 'Không đường'],
+  ['Sữa chua ăn tự nhiên', 'dairy', 32000, 38000, 28, 'Trang trại Mộc Châu', '4 hũ', 'Mộc Châu', 'Men sống tự nhiên'],
+  ['Phô mai lát', 'dairy', 59000, 69000, 17, 'Bếp Nhà Mình', '200g', 'Việt Nam', 'Béo thơm tiện dụng'],
+  ['Bơ lạt', 'dairy', 65000, 75000, 15, 'Bếp Nhà Mình', '200g', 'Việt Nam', 'Dùng làm bánh'],
+  ['Gạo ST25 thơm ngon', 'pantry', 145000, 165000, 26, 'Nông sản miền Tây', '5kg', 'Sóc Trăng', 'Gạo ngon đặc sản'],
+  ['Yến mạch nguyên hạt', 'pantry', 78000, 89000, 18, 'Bếp Nhà Mình', '1kg', 'Úc', 'Bữa sáng lành mạnh'],
+  ['Đậu xanh nguyên vỏ', 'pantry', 42000, 49000, 23, 'Nông sản miền Tây', '500g', 'An Giang', 'Hạt đều, thơm bùi'],
+  ['Mật ong hoa cà phê', 'pantry', 125000, 145000, 13, 'Nông sản Tây Nguyên', '500ml', 'Đắk Lắk', 'Nguyên chất tự nhiên'],
+  ['Dầu ô liu nguyên chất', 'pantry', 159000, 179000, 9, 'Bếp Nhà Mình', '500ml', 'Ý', 'Ép lạnh nguyên chất'],
+  ['Hạt điều rang muối', 'pantry', 89000, 105000, 20, 'Nông sản Tây Nguyên', '500g', 'Bình Phước', 'Giòn thơm, ít muối']
+].map(([name, category, price, originalPrice, stock, brand, unit, origin, badge], index) => ({
+  id: index + 1,
+  name,
+  brand,
+  category,
+  price,
+  originalPrice,
+  processor: origin,
+  memory: '',
+  storage: unit,
+  display: '',
+  origin,
+  unit,
+  description: badge,
+  stock,
+  badge,
+  image: imageByProduct[name]
+}));
 const logs = [
   '[09:42:04] deploy: verifying production health checks',
   '[09:41:48] deploy: container testdemo-ci-cd started',
@@ -89,6 +149,10 @@ app.get('/auth', (_request, response) => {
   response.sendFile(path.join(publicDirectory, 'auth.html'));
 });
 
+app.get('/account', (_request, response) => {
+  response.sendFile(path.join(publicDirectory, 'account.html'));
+});
+
 app.get('/health', (_request, response) => {
   response.json({ status: 'ok' });
 });
@@ -99,6 +163,10 @@ app.get('/api/products', async (request, response) => {
 });
 
 app.post('/api/orders', async (request, response) => {
+  const authorization = request.get('authorization') ?? '';
+  const token = authorization.startsWith('Bearer ') ? authorization.slice(7) : '';
+  const user = token ? await getAuthenticatedUser(request) : null;
+  if (token && !user) return response.status(401).json({ error: 'authentication required' });
   const { customerName = '', phone = '', address = '', paymentMethod = 'cod', items: requestedItems = [] } = request.body ?? {};
   if (typeof customerName !== 'string' || !customerName.trim() || customerName.length > 100
     || typeof phone !== 'string' || !/^[0-9+() .-]{9,20}$/.test(phone.trim())
@@ -125,12 +193,17 @@ app.post('/api/orders', async (request, response) => {
     customerName: customerName.trim(),
     phone: phone.trim(),
     address: address.trim(),
-    paymentMethod
+    paymentMethod,
+    userId: user?.id ?? null
   }, orderItems);
   if (result.error) return response.status(result.status).json({ error: result.error });
   const { order } = result;
   logs.unshift(`[now] order: #${order.id} received (${order.items.length} product types)`);
-  return response.status(201).json({ order: { id: order.id, total: order.total, status: order.status } });
+  return response.status(201).json({ order: { id: order.id, total: order.total, status: order.status, paymentMethod: order.paymentMethod } });
+});
+
+app.get('/api/orders', requireAuth, async (request, response) => {
+  response.json({ items: await listUserOrders(request.user.id) });
 });
 
 async function hashPassword(password) {
@@ -170,6 +243,11 @@ function requireAdmin(request, response, next) {
   return next();
 }
 
+function requireCustomer(request, response, next) {
+  if (request.user.role !== 'user') return response.status(403).json({ error: 'customer account required' });
+  return next();
+}
+
 app.post('/api/auth/register', async (request, response) => {
   const { name = '', email = '', password = '' } = request.body ?? {};
   const normalizedEmail = email.trim().toLowerCase();
@@ -179,7 +257,7 @@ app.post('/api/auth/register', async (request, response) => {
   const user = await createUser({
     name: name.trim(),
     email: normalizedEmail,
-    role: process.env.NODE_ENV !== 'production' && normalizedEmail === 'admin@testdemo.local' ? 'admin' : 'user',
+    role: 'user',
     passwordHash: await hashPassword(password)
   });
   if (!user) return response.status(409).json({ error: 'email is already registered' });
@@ -200,6 +278,52 @@ app.post('/api/auth/login', async (request, response) => {
 app.get('/api/auth/me', requireAuth, (request, response) => {
   const { id, name, email, role } = request.user;
   response.json({ user: { id, name, email, role } });
+});
+
+app.get('/api/account/profile', requireAuth, requireCustomer, async (request, response) => {
+  const profile = await getAccountProfile(request.user.id);
+  if (!profile) return response.status(404).json({ error: 'Không tìm thấy tài khoản.' });
+  const { id, name, email, phone, address, latitude, longitude, createdAt } = profile;
+  return response.json({ profile: { id, name, email, phone, address, latitude, longitude, createdAt } });
+});
+
+app.patch('/api/account/profile', requireAuth, requireCustomer, async (request, response) => {
+  const { name = '', phone = '', address = '', latitude = null, longitude = null } = request.body ?? {};
+  if (typeof name !== 'string' || !name.trim() || name.trim().length > 100
+    || typeof phone !== 'string' || phone.length > 20 || (phone && !/^[0-9+() .-]{9,20}$/.test(phone.trim()))
+    || typeof address !== 'string' || !address.trim() || address.length > 300
+    || (latitude !== null && (typeof latitude !== 'number' || !Number.isFinite(latitude) || latitude < -90 || latitude > 90))
+    || (longitude !== null && (typeof longitude !== 'number' || !Number.isFinite(longitude) || longitude < -180 || longitude > 180))
+    || ((latitude === null) !== (longitude === null))) {
+    return response.status(400).json({ error: 'Thông tin hồ sơ không hợp lệ.' });
+  }
+  const profile = await updateAccountProfile(request.user.id, {
+    name: name.trim(),
+    phone: phone.trim(),
+    address: address.trim(),
+    latitude,
+    longitude
+  });
+  if (!profile) return response.status(404).json({ error: 'Không tìm thấy tài khoản.' });
+  const { id, email, createdAt } = profile;
+  return response.json({
+    profile: {
+      id, name: profile.name, email, phone: profile.phone, address: profile.address,
+      latitude: profile.latitude, longitude: profile.longitude, createdAt
+    }
+  });
+});
+
+app.get('/api/account/benefits', requireAuth, requireCustomer, async (request, response) => {
+  response.json(await getAccountBenefits(request.user.id));
+});
+
+app.patch('/api/account/notifications/:id/read', requireAuth, requireCustomer, async (request, response) => {
+  const id = Number(request.params.id);
+  if (!Number.isSafeInteger(id) || id < 1) return response.status(400).json({ error: 'Thông báo không hợp lệ.' });
+  const updated = await markAccountNotificationRead(request.user.id, id);
+  if (!updated) return response.status(404).json({ error: 'Không tìm thấy thông báo.' });
+  return response.status(204).end();
 });
 
 app.post('/api/auth/logout', requireAuth, async (request, response) => {
@@ -234,17 +358,20 @@ app.get('/api/admin/products', requireAuth, requireAdmin, async (_request, respo
 });
 
 app.post('/api/admin/products', requireAuth, requireAdmin, async (request, response) => {
-  const { name = '', brand = '', category = '', price, originalPrice, processor = '', memory = '', storage = '', display = '', stock, image = '', badge = '' } = request.body ?? {};
+  const { name = '', brand = '', category = '', price, originalPrice, origin = '', unit = 'kg', description = '', stock, image = '', badge = '' } = request.body ?? {};
   if (typeof name !== 'string' || !name.trim() || name.length > 120
     || typeof brand !== 'string' || !brand.trim() || brand.length > 50
-    || !['office', 'gaming', 'thin', 'creator', 'student', 'business', 'convertible'].includes(category)
+    || !['vegetables', 'fruits', 'meat', 'seafood', 'dairy', 'pantry'].includes(category)
     || !Number.isSafeInteger(price) || price < 1
     || (originalPrice !== undefined && (!Number.isSafeInteger(originalPrice) || originalPrice < price))
     || !Number.isSafeInteger(stock) || stock < 0 || stock > 10000
-    || ![processor, memory, storage, display, image, badge].every((field) => typeof field === 'string' && field.length <= 500)) {
+    || ![origin, unit, description, image, badge].every((field) => typeof field === 'string' && field.length <= 500)) {
     return response.status(400).json({ error: 'Thông tin sản phẩm không hợp lệ.' });
   }
-  const product = await createProduct({ name: name.trim(), brand: brand.trim(), category, price, originalPrice: originalPrice ?? price, processor, memory, storage, display, stock, image, badge });
+  const product = await createProduct({
+    name: name.trim(), brand: brand.trim(), category, price, originalPrice: originalPrice ?? price,
+    processor: origin, memory: '', storage: unit, display: '', origin, unit, description, stock, image, badge
+  });
   logs.unshift(`[now] inventory: ${product.name} added by admin`);
   return response.status(201).json({ product });
 });
@@ -265,6 +392,11 @@ app.get('/api/admin/orders', requireAuth, requireAdmin, async (_request, respons
   response.json({ items: await listOrders() });
 });
 
+app.get('/api/admin/customers', requireAuth, requireAdmin, async (request, response) => {
+  const search = typeof request.query.q === 'string' ? request.query.q.slice(0, 100) : '';
+  response.json({ items: await listCustomers(search) });
+});
+
 app.patch('/api/admin/orders/:id', requireAuth, requireAdmin, async (request, response) => {
   const { status } = request.body ?? {};
   if (!['Mới', 'Đang xử lý', 'Đang giao', 'Hoàn tất', 'Đã hủy'].includes(status)) {
@@ -277,6 +409,16 @@ app.patch('/api/admin/orders/:id', requireAuth, requireAdmin, async (request, re
   return response.json({ order });
 });
 
+app.patch('/api/admin/orders/:id/payment', requireAuth, requireAdmin, async (request, response) => {
+  const { paymentStatus } = request.body ?? {};
+  if (!['Chưa thanh toán', 'Đã thanh toán', 'Hoàn tiền'].includes(paymentStatus)) {
+    return response.status(400).json({ error: 'Trạng thái thanh toán không hợp lệ.' });
+  }
+  const order = await updateOrderPaymentStatus(Number(request.params.id), paymentStatus);
+  if (!order) return response.status(404).json({ error: 'Không tìm thấy đơn hàng.' });
+  logs.unshift(`[now] payment: order #${order.id} updated to ${paymentStatus}`);
+  return response.json({ order });
+});
 app.post('/api/admin/deployments', requireAuth, requireAdmin, (request, response) => {
   const { environment = 'staging', release = 'next', commit = 'local', author = 'Admin' } = request.body ?? {};
   if (!['staging', 'production'].includes(environment)) {

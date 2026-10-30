@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quản lý thông tin tài khoản, voucher, thông báo và đơn hàng Bếp Xanh.">
+    <title>Tài khoản của tôi — Bếp Xanh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body class="store-page customer-account-page">
+    <div class="store-topline">BẾP XANH · TÀI KHOẢN THÀNH VIÊN</div>
+    <header class="store-header account-header">
+      <a class="store-brand" href="/" aria-label="Bếp Xanh trang chủ"><span class="store-brand-mark">B</span><span>bếp<span>xanh</span></span></a>
+      <div class="account-header-title">Tài khoản của tôi</div>
+      <div class="account-header-actions"><a class="store-orders-link" href="/">← Cửa hàng</a><button class="outline-button" id="accountLogout" type="button">Đăng xuất</button></div>
+    </header>
+    <main class="customer-account-layout">
+      <section class="account-welcome"><p class="store-kicker">THÀNH VIÊN BẾP XANH</p><h1>Xin chào, <span id="welcomeName">bạn</span></h1><p>Quản lý hồ sơ, theo dõi ưu đãi và cập nhật mới nhất dành cho bạn.</p></section>
+      <div class="customer-account-grid">
+        <section class="account-panel">
+          <div class="account-panel-heading"><div><p class="store-kicker">THÔNG TIN CỦA BẠN</p><h2>Hồ sơ tài khoản</h2></div></div>
+          <form id="profileForm" class="account-profile-form">
+            <label>Họ và tên<input name="name" required maxlength="100"></label>
+            <label>Email đăng nhập<input name="email" type="email" readonly></label>
+            <label>Số điện thoại<input name="phone" type="tel" maxlength="20"></label>
+            <section class="account-address-section">
+              <div class="account-address-heading"><span>⌖</span><strong>Sổ địa chỉ nhận hàng mặc định</strong><small>✦ Auto-fill khi mua hàng</small></div>
+              <label>Địa chỉ giao hàng chi tiết *<input name="address" required maxlength="300" autocomplete="street-address" aria-describedby="addressHelp" placeholder="Nhập số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></label>
+              <input name="latitude" type="hidden">
+              <input name="longitude" type="hidden">
+              <div class="account-map-toolbar"><small id="addressHelp">Kéo ghim hoặc chọn điểm trên bản đồ để lưu vị trí giao hàng.</small><button class="use-current-location" id="useCurrentLocation" type="button">⌖ Dùng vị trí hiện tại</button></div>
+              <div class="account-coordinate-readout" id="coordinateReadout">Chưa chọn vị trí trên bản đồ</div>
+              <div class="account-popular-places"><small>Địa điểm tham khảo:</small><div>
+                <button type="button" data-place="Số 2 Hải Triều, Bến Nghé, Quận 1, TP. Hồ Chí Minh" data-lat="10.7716" data-lng="106.7044">Số 2 Hải Triều</button>
+                <button type="button" data-place="Bitexco Financial Tower, Bến Nghé, Quận 1, TP. Hồ Chí Minh" data-lat="10.7717" data-lng="106.7042">Bitexco</button>
+                <button type="button" data-place="Vincom Center Đồng Khởi, Bến Nghé, Quận 1, TP. Hồ Chí Minh" data-lat="10.7770" data-lng="106.7014">Vincom Center</button>
+                <button type="button" data-place="Phố đi bộ Nguyễn Huệ, Bến Nghé, Quận 1, TP. Hồ Chí Minh" data-lat="10.7744" data-lng="106.7030">Phố đi bộ Nguyễn Huệ</button>
+              </div></div>
+              <div class="account-map" id="accountMap" role="application" aria-label="Bản đồ chọn vị trí giao hàng"></div>
+              <p class="account-map-consent">Bản đồ sử dụng OpenStreetMap. Vị trí thiết bị chỉ được đọc khi bạn bấm “Dùng vị trí hiện tại”.</p>
+            </section>
+            <button class="store-checkout-button" type="submit">Lưu thông tin</button>
+            <p class="account-form-message" id="profileMessage" role="status"></p>
+          </form>
+        </section>
+        <section class="account-panel">
+          <div class="account-panel-heading"><div><p class="store-kicker">ƯU ĐÃI DÀNH RIÊNG</p><h2>Voucher của bạn</h2></div></div>
+          <div class="account-voucher-list" id="accountVouchers"><p class="account-muted">Đang tải voucher...</p></div>
+        </section>
+        <section class="account-panel account-notifications-panel">
+          <div class="account-panel-heading"><div><p class="store-kicker">TIN MỚI TỪ BẾP XANH</p><h2>Thông báo</h2></div></div>
+          <div class="account-notification-list" id="accountNotifications"><p class="account-muted">Đang tải thông báo...</p></div>
+        </section>
+        <section class="account-panel account-orders-panel">
+          <div class="account-panel-heading"><div><p class="store-kicker">LỊCH SỬ MUA SẮM</p><h2>Đơn hàng của bạn</h2></div></div>
+          <div class="order-history-list" id="accountOrders"><p class="account-muted">Đang tải đơn hàng...</p></div>
+        </section>
+      </div>
+    </main>
+    <footer class="store-footer"><a class="store-brand" href="/"><span class="store-brand-mark">B</span><span>bếp<span>xanh</span></span></a><span>Thực phẩm tươi ngon cho bữa cơm nhà.</span><span>© 2026 Bếp Xanh</span></footer>
+    <div class="toast" id="accountToast" role="status"></div>
+    <script src="/vendor/leaflet/leaflet.js"></script>
+    <script src="/account.js"></script>
+  </body>
+</html>
