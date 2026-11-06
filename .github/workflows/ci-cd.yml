@@ -49,12 +49,25 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: appleboy/ssh-action@v1.2.0
+      - name: Check deployment secrets
+        id: check_secrets
+        run: |
+          if [ -z "${{ secrets.DEPLOY_HOST }}" ] || [ -z "${{ secrets.DEPLOY_KEY }}" ]; then
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "::notice title=Deploy Skipped::DEPLOY_HOST hoặc DEPLOY_KEY chưa được cấu hình trong GitHub Secrets. Hãy cấu hình để tự động deploy lên AWS EC2."
+          else
+            echo "configured=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy to EC2 via SSH
+        if: steps.check_secrets.outputs.configured == 'true'
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
+          username: ${{ secrets.DEPLOY_USER || 'ubuntu' }}
           key: ${{ secrets.DEPLOY_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
           script: |
-            cd ${{ secrets.DEPLOY_PATH }}
+            cd ${{ secrets.DEPLOY_PATH || '/opt/testdemo' }}
             docker compose pull app
             docker compose up -d app
