@@ -1,0 +1,14 @@
+# Sao chép file này thành terraform.tfvars để tùy chỉnh theo ý bạn:
+aws_region        = "ap-southeast-1"
+environment       = "production"
+project_name      = "testdemo"
+instance_type     = "t3.micro"
+create_ssh_key    = true
+key_name          = "testdemo-key"
+db_name           = "testdemo"
+db_username       = "testdemo_user"
+db_password       = "TestDemoStrongPass2026!"
+github_repo_image = "ghcr.io/your-github-username/testdemo:latest"
+admin_email       = "admin@example.com"
+admin_password    = "AdminSecurePassword2026!"
+
