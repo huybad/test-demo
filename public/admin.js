@@ -44,8 +44,15 @@ function renderProducts() {
     <td>${escapeHtml(product.brand)}</td><td>${money.format(product.price)}đ</td>
     <td><input class="inventory-input" type="number" min="0" max="10000" value="${product.stock}" data-stock="${product.id}" aria-label="Tồn kho ${escapeHtml(product.name)}"></td>
     <td><span class="badge ${product.stock ? 'success' : 'failed'}">${product.stock ? 'Còn hàng' : 'Hết hàng'}</span></td>
-    <td><button class="outline-button save-stock" type="button" data-save-stock="${product.id}">Lưu</button></td>
+    <td>
+      <div class="product-actions">
+        <button class="outline-button save-stock" type="button" data-save-stock="${product.id}" title="Lưu số lượng tồn">Lưu</button>
+        <button class="outline-button edit-product" type="button" data-edit-product="${product.id}" title="Chỉnh sửa sản phẩm">Sửa</button>
+        <button class="outline-button delete-product" type="button" data-delete-product="${product.id}" title="Xóa sản phẩm">Xóa</button>
+      </div>
+    </td>
   </tr>`).join('');
+
   productsElement.querySelectorAll('[data-save-stock]').forEach((button) => button.addEventListener('click', async () => {
     const input = productsElement.querySelector(`[data-stock="${button.dataset.saveStock}"]`);
     const stock = Number(input.value);
@@ -56,6 +63,27 @@ function renderProducts() {
         body: JSON.stringify({ stock })
       });
       showToast('Đã cập nhật tồn kho.');
+      await loadAdminData();
+    } catch (error) {
+      showToast(error.message);
+    }
+  }));
+
+  productsElement.querySelectorAll('[data-edit-product]').forEach((button) => button.addEventListener('click', () => {
+    const productId = Number(button.dataset.editProduct);
+    const product = currentProducts.find((p) => p.id === productId);
+    if (!product) return;
+    openEditDialog(product);
+  }));
+
+  productsElement.querySelectorAll('[data-delete-product]').forEach((button) => button.addEventListener('click', async () => {
+    const productId = Number(button.dataset.deleteProduct);
+    const product = currentProducts.find((p) => p.id === productId);
+    const name = product ? product.name : `sản phẩm #${productId}`;
+    if (!confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${name}" không?`)) return;
+    try {
+      await request(`/api/admin/products/${productId}`, { method: 'DELETE' });
+      showToast(`Đã xóa sản phẩm "${name}".`);
       await loadAdminData();
     } catch (error) {
       showToast(error.message);
@@ -165,7 +193,61 @@ document.querySelector('#productForm').addEventListener('submit', async (event) 
 document.querySelector('#refreshAdmin').addEventListener('click', () => loadAdminData().then(() => showToast('Dữ liệu đã được làm mới.')).catch((error) => showToast(error.message)));
 document.querySelector('#customerSearchForm').addEventListener('submit', (event) => {
   event.preventDefault();
-  loadAdminData().catch((error) => showToast(error.message));
+  const editProductDialog = document.querySelector('#editProductDialog');
+const editProductForm = document.querySelector('#editProductForm');
+
+function openEditDialog(product) {
+  editProductForm.id.value = product.id;
+  editProductForm.name.value = product.name || '';
+  editProductForm.brand.value = product.brand || '';
+  editProductForm.category.value = product.category || 'vegetables';
+  editProductForm.price.value = product.price ?? '';
+  editProductForm.originalPrice.value = product.originalPrice ?? '';
+  editProductForm.stock.value = product.stock ?? 0;
+  editProductForm.unit.value = product.unit || product.storage || '';
+  editProductForm.origin.value = product.origin || '';
+  editProductForm.description.value = product.description || '';
+  editProductForm.image.value = product.image || '';
+  editProductForm.badge.value = product.badge || '';
+  editProductDialog.showModal();
+}
+
+document.querySelector('#closeEditProduct')?.addEventListener('click', () => editProductDialog.close());
+document.querySelector('#cancelEditProduct')?.addEventListener('click', () => editProductDialog.close());
+
+editProductForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const formData = new FormData(editProductForm);
+  const fields = Object.fromEntries(formData);
+  const id = Number(fields.id);
+  const updates = {
+    name: fields.name,
+    brand: fields.brand,
+    category: fields.category,
+    price: Number(fields.price),
+    originalPrice: fields.originalPrice ? Number(fields.originalPrice) : undefined,
+    stock: Number(fields.stock),
+    unit: fields.unit,
+    origin: fields.origin,
+    description: fields.description,
+    image: fields.image,
+    badge: fields.badge
+  };
+  try {
+    await request(`/api/admin/products/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    });
+    editProductDialog.close();
+    showToast(`Đã cập nhật sản phẩm "${updates.name}".`);
+    await loadAdminData();
+  } catch (error) {
+    showToast(error.message);
+  }
+});
+
+loadAdminData().catch((error) => showToast(error.message));
 });
 document.querySelector('#copyLogs').addEventListener('click', async () => {
   try {
@@ -204,5 +286,59 @@ try {
   console.error('Unable to read administrator account.', error);
   window.location.href = '/auth';
 }
+
+const editProductDialog = document.querySelector('#editProductDialog');
+const editProductForm = document.querySelector('#editProductForm');
+
+function openEditDialog(product) {
+  editProductForm.id.value = product.id;
+  editProductForm.name.value = product.name || '';
+  editProductForm.brand.value = product.brand || '';
+  editProductForm.category.value = product.category || 'vegetables';
+  editProductForm.price.value = product.price ?? '';
+  editProductForm.originalPrice.value = product.originalPrice ?? '';
+  editProductForm.stock.value = product.stock ?? 0;
+  editProductForm.unit.value = product.unit || product.storage || '';
+  editProductForm.origin.value = product.origin || '';
+  editProductForm.description.value = product.description || '';
+  editProductForm.image.value = product.image || '';
+  editProductForm.badge.value = product.badge || '';
+  editProductDialog.showModal();
+}
+
+document.querySelector('#closeEditProduct')?.addEventListener('click', () => editProductDialog.close());
+document.querySelector('#cancelEditProduct')?.addEventListener('click', () => editProductDialog.close());
+
+editProductForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const formData = new FormData(editProductForm);
+  const fields = Object.fromEntries(formData);
+  const id = Number(fields.id);
+  const updates = {
+    name: fields.name,
+    brand: fields.brand,
+    category: fields.category,
+    price: Number(fields.price),
+    originalPrice: fields.originalPrice ? Number(fields.originalPrice) : undefined,
+    stock: Number(fields.stock),
+    unit: fields.unit,
+    origin: fields.origin,
+    description: fields.description,
+    image: fields.image,
+    badge: fields.badge
+  };
+  try {
+    await request(`/api/admin/products/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    });
+    editProductDialog.close();
+    showToast(`Đã cập nhật sản phẩm "${updates.name}".`);
+    await loadAdminData();
+  } catch (error) {
+    showToast(error.message);
+  }
+});
 
 loadAdminData().catch((error) => showToast(error.message));

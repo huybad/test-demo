@@ -340,21 +340,52 @@ export async function updateProduct(id, updates) {
     Object.assign(product, updates);
     return product;
   }
+  const fieldMap = [
+    ['stock', 'stock'],
+    ['price', 'price'],
+    ['name', 'name'],
+    ['brand', 'brand'],
+    ['category', 'category'],
+    ['originalPrice', 'original_price'],
+    ['origin', 'origin'],
+    ['unit', 'unit'],
+    ['description', 'description'],
+    ['badge', 'badge'],
+    ['image', 'image']
+  ];
   const fields = [];
   const values = [];
-  for (const [key, column] of [['stock', 'stock'], ['price', 'price']]) {
+  for (const [key, column] of fieldMap) {
     if (updates[key] !== undefined) {
       values.push(updates[key]);
       fields.push(`${column} = $${values.length}`);
     }
   }
+  if (fields.length === 0) {
+    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+    return result.rows[0] ? mapProduct(result.rows[0]) : null;
+  }
   values.push(id);
   const result = await pool.query(
-    `UPDATE products SET ${fields.join(', ')} WHERE id = $${values.length}
-      AND category IN ('vegetables', 'fruits', 'meat', 'seafood', 'dairy', 'pantry') RETURNING *`,
+    `UPDATE products SET ${fields.join(', ')} WHERE id = $${values.length} RETURNING *`,
     values
   );
   return result.rows[0] ? mapProduct(result.rows[0]) : null;
+}
+
+export async function deleteProduct(id) {
+  if (!pool) {
+    const index = memory.products.findIndex((item) => item.id === id);
+    if (index === -1) return false;
+    memory.products.splice(index, 1);
+    return true;
+  }
+  const checkOrder = await pool.query('SELECT 1 FROM order_items WHERE product_id = $1 LIMIT 1', [id]);
+  if (checkOrder.rows.length > 0) {
+    throw new Error('Không thể xóa sản phẩm này vì đã có trong lịch sử đơn hàng. Bạn có thể cập nhật tồn kho về 0.');
+  }
+  const result = await pool.query('DELETE FROM products WHERE id = $1', [id]);
+  return (result.rowCount ?? 0) > 0;
 }
 
 export async function createOrder(details, items) {

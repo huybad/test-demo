@@ -24,7 +24,8 @@ import {
   updateOrderStatus,
   updateOrderPaymentStatus,
   updateAccountProfile,
-  updateProduct
+  updateProduct,
+  deleteProduct
 } from './database.js';
 
 const app = express();
@@ -377,15 +378,60 @@ app.post('/api/admin/products', requireAuth, requireAdmin, async (request, respo
 });
 
 app.patch('/api/admin/products/:id', requireAuth, requireAdmin, async (request, response) => {
-  const { stock, price } = request.body ?? {};
-  if ((stock !== undefined && (!Number.isSafeInteger(stock) || stock < 0 || stock > 10000))
-    || (price !== undefined && (!Number.isSafeInteger(price) || price < 1))) {
-    return response.status(400).json({ error: 'Giá hoặc số lượng tồn kho không hợp lệ.' });
+  const id = Number(request.params.id);
+  const { name, brand, category, price, originalPrice, stock, origin, unit, description, badge, image } = request.body ?? {};
+
+  if (stock !== undefined && (!Number.isSafeInteger(stock) || stock < 0 || stock > 10000)) {
+    return response.status(400).json({ error: 'Số lượng tồn kho không hợp lệ.' });
   }
-  const product = await updateProduct(Number(request.params.id), { stock, price });
+  if (price !== undefined && (!Number.isSafeInteger(price) || price < 1)) {
+    return response.status(400).json({ error: 'Giá bán không hợp lệ.' });
+  }
+  if (originalPrice !== undefined && (!Number.isSafeInteger(originalPrice) || originalPrice < (price ?? 0))) {
+    return response.status(400).json({ error: 'Giá niêm yết không hợp lệ.' });
+  }
+  if (category !== undefined && !['vegetables', 'fruits', 'meat', 'seafood', 'dairy', 'pantry'].includes(category)) {
+    return response.status(400).json({ error: 'Phân loại không hợp lệ.' });
+  }
+  if (name !== undefined && (typeof name !== 'string' || !name.trim() || name.length > 120)) {
+    return response.status(400).json({ error: 'Tên sản phẩm không hợp lệ.' });
+  }
+  if (brand !== undefined && (typeof brand !== 'string' || !brand.trim() || brand.length > 50)) {
+    return response.status(400).json({ error: 'Nguồn hàng không hợp lệ.' });
+  }
+  if ([origin, unit, description, image, badge].some((f) => f !== undefined && (typeof f !== 'string' || f.length > 500))) {
+    return response.status(400).json({ error: 'Thông tin chi tiết không hợp lệ.' });
+  }
+
+  const updates = {};
+  if (stock !== undefined) updates.stock = stock;
+  if (price !== undefined) updates.price = price;
+  if (originalPrice !== undefined) updates.originalPrice = originalPrice;
+  if (name !== undefined) updates.name = name.trim();
+  if (brand !== undefined) updates.brand = brand.trim();
+  if (category !== undefined) updates.category = category;
+  if (origin !== undefined) updates.origin = origin.trim();
+  if (unit !== undefined) updates.unit = unit.trim();
+  if (description !== undefined) updates.description = description.trim();
+  if (badge !== undefined) updates.badge = badge.trim();
+  if (image !== undefined) updates.image = image.trim();
+
+  const product = await updateProduct(id, updates);
   if (!product) return response.status(404).json({ error: 'Không tìm thấy sản phẩm.' });
   logs.unshift(`[now] inventory: ${product.name} updated by admin`);
   return response.json({ product });
+});
+
+app.delete('/api/admin/products/:id', requireAuth, requireAdmin, async (request, response) => {
+  const id = Number(request.params.id);
+  try {
+    const success = await deleteProduct(id);
+    if (!success) return response.status(404).json({ error: 'Không tìm thấy sản phẩm để xóa.' });
+    logs.unshift(`[now] inventory: product #${id} deleted by admin`);
+    return response.json({ message: 'Đã xóa sản phẩm thành công.' });
+  } catch (error) {
+    return response.status(400).json({ error: error.message || 'Không thể xóa sản phẩm.' });
+  }
 });
 
 app.get('/api/admin/orders', requireAuth, requireAdmin, async (_request, response) => {

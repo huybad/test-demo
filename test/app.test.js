@@ -179,6 +179,41 @@ test('guest can place an order and admin can manage store products and orders', 
   assert.equal(orderList.items[0].status, 'Đang xử lý');
 }));
 
+test('admin can edit and delete products', () => withServer(async (baseUrl) => {
+  const token = await registerAdmin(baseUrl);
+  const authHeaders = { authorization: `Bearer ${token}`, 'content-type': 'application/json' };
+
+  const createRes = await fetch(`${baseUrl}/api/admin/products`, {
+    method: 'POST',
+    headers: authHeaders,
+    body: JSON.stringify({ name: 'Sản phẩm thử nghiệm sửa xóa', brand: 'Farm A', category: 'fruits', price: 20000, stock: 10, unit: '1kg', origin: 'Tiền Giang' })
+  });
+  assert.equal(createRes.status, 201);
+  const { product } = await createRes.json();
+
+  const editRes = await fetch(`${baseUrl}/api/admin/products/${product.id}`, {
+    method: 'PATCH',
+    headers: authHeaders,
+    body: JSON.stringify({ name: 'Sản phẩm đã sửa', price: 25000, stock: 15, origin: 'Bến Tre' })
+  });
+  assert.equal(editRes.status, 200);
+  const editedData = await editRes.json();
+  assert.equal(editedData.product.name, 'Sản phẩm đã sửa');
+  assert.equal(editedData.product.price, 25000);
+  assert.equal(editedData.product.stock, 15);
+  assert.equal(editedData.product.origin, 'Bến Tre');
+
+  const deleteRes = await fetch(`${baseUrl}/api/admin/products/${product.id}`, {
+    method: 'DELETE',
+    headers: authHeaders
+  });
+  assert.equal(deleteRes.status, 200);
+
+  const listRes = await fetch(`${baseUrl}/api/admin/products`, { headers: authHeaders });
+  const listData = await listRes.json();
+  assert.equal(listData.items.some((p) => p.id === product.id), false);
+}));
+
 test('customers can view only their own order history and choose bank transfer', () => withServer(async (baseUrl) => {
   const register = async (email) => {
     const response = await fetch(`${baseUrl}/api/auth/register`, {

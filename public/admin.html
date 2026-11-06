@@ -29,13 +29,53 @@
         <section class="admin-heading"><div><p class="eyebrow">QUẢN LÝ CỬA HÀNG</p><h1>Control room.</h1><p class="hero-copy">Theo dõi thực phẩm, tồn kho và đơn hàng Bếp Xanh.</p></div><button class="primary-button" id="refreshAdmin">↻ Làm mới dữ liệu</button></section>
         <section class="admin-stats" aria-label="Tổng quan cửa hàng"><article class="admin-stat"><span>Sản phẩm đang bán</span><strong id="productCount">—</strong><small>Danh mục thực phẩm</small></article><article class="admin-stat"><span>Đơn hàng</span><strong id="orderCount">—</strong><small>Đơn đã tiếp nhận</small></article><article class="admin-stat"><span>Chờ xử lý</span><strong id="pendingCount">—</strong><small>Cần xác nhận đơn</small></article><article class="admin-stat"><span>Tổng tồn kho</span><strong id="stockCount">—</strong><small>Sản phẩm sẵn sàng giao</small></article></section>
         <section class="panel admin-form-panel admin-product-form"><div class="panel-heading"><div><p class="eyebrow">DANH MỤC THỰC PHẨM</p><h2>Thêm sản phẩm mới</h2></div></div><form id="productForm"><label>Tên sản phẩm<input name="name" required maxlength="120" placeholder="Ví dụ: Cà chua chín cây"></label><label>Nguồn hàng<input name="brand" required maxlength="50" placeholder="Nông trại Đà Lạt"></label><label>Phân loại<select name="category"><option value="vegetables">Rau củ</option><option value="fruits">Trái cây</option><option value="meat">Thịt & trứng</option><option value="seafood">Hải sản</option><option value="dairy">Sữa & chế phẩm</option><option value="pantry">Thực phẩm khô</option></select></label><label>Giá bán (VNĐ)<input name="price" type="number" min="0" step="any" required placeholder="25000"></label><label>Giá niêm yết (VNĐ)<input name="originalPrice" type="number" min="0" step="any" placeholder="30000"></label><label>Số lượng tồn<input name="stock" type="number" min="0" max="10000" step="1" required value="1"></label><label>Xuất xứ<input name="origin" maxlength="100" placeholder="Đà Lạt"></label><label>Quy cách<input name="unit" maxlength="40" placeholder="500g, 1kg, 1 bó..."></label><label>Mô tả ngắn<input name="description" maxlength="200" placeholder="Tươi ngon mỗi ngày"></label><label>Ảnh sản phẩm (URL)<input name="image" type="url" maxlength="500" placeholder="https://..."></label><label>Nhãn sản phẩm<input name="badge" maxlength="60" placeholder="Tươi mỗi ngày"></label><button class="primary-button" type="submit">Thêm sản phẩm <span>→</span></button></form></section>
-        <section class="panel admin-table-panel" id="admin-products"><div class="panel-heading"><div><p class="eyebrow">QUẢN LÝ KHO</p><h2>Sản phẩm & tồn kho</h2></div><span class="tool-label">Cập nhật số lượng trực tiếp</span></div><div class="table-wrap"><table><thead><tr><th>Sản phẩm</th><th>Nguồn hàng</th><th>Giá bán</th><th>Tồn kho</th><th>Trạng thái</th><th></th></tr></thead><tbody id="adminProducts"></tbody></table></div></section>
+        <section class="panel admin-table-panel" id="admin-products"><div class="panel-heading"><div><p class="eyebrow">QUẢN LÝ KHO</p><h2>Sản phẩm & tồn kho</h2></div><span class="tool-label">Cập nhật số lượng trực tiếp</span></div><div class="table-wrap"><table><thead><tr><th>Sản phẩm</th><th>Nguồn hàng</th><th>Giá bán</th><th>Tồn kho</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="adminProducts"></tbody></table></div></section>
         <section class="panel admin-table-panel" id="admin-orders"><div class="panel-heading"><div><p class="eyebrow">BÁN HÀNG</p><h2>Đơn hàng mới nhất</h2></div><span class="tool-label">Quản lý giao hàng và thanh toán</span></div><div class="table-wrap"><table><thead><tr><th>Mã đơn / Khách hàng</th><th>Liên hệ & địa chỉ</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Giao hàng</th><th>Thanh toán</th><th></th></tr></thead><tbody id="adminOrders"></tbody></table></div><p class="admin-empty" id="emptyOrders" hidden>Chưa có đơn hàng nào.</p></section>
         <section class="panel admin-table-panel" id="admin-customers"><div class="panel-heading"><div><p class="eyebrow">TÀI KHOẢN ĐÃ ĐĂNG KÝ</p><h2>Khách hàng</h2></div><form class="customer-search-form" id="customerSearchForm"><input id="customerSearchInput" type="search" maxlength="100" aria-label="Tìm khách hàng" placeholder="Tên, email hoặc số điện thoại"><button class="outline-button" type="submit">Tìm kiếm</button></form></div><div class="table-wrap"><table><thead><tr><th>Khách hàng</th><th>Email</th><th>Điện thoại</th><th>Địa chỉ</th><th>Đơn hàng</th><th>Ngày đăng ký</th></tr></thead><tbody id="adminCustomers"></tbody></table></div><p class="admin-empty" id="emptyCustomers" hidden>Chưa có khách hàng phù hợp.</p></section>
         <section class="panel logs-panel" id="admin-logs"><div class="panel-heading"><div><p class="eyebrow">HOẠT ĐỘNG CỬA HÀNG</p><h2>Nhật ký hệ thống</h2></div><div class="log-actions"><button class="outline-button" id="copyLogs">Sao chép</button><button class="outline-button" id="exportData">Xuất dữ liệu</button></div></div><pre id="systemLogs">Đang tải nhật ký...</pre></section>
         <footer>Bếp Xanh Store Admin <span>•</span> Quản lý cửa hàng</footer>
       </main>
     </div>
+    <dialog class="checkout-dialog edit-product-dialog" id="editProductDialog">
+      <form id="editProductForm">
+        <div class="checkout-heading">
+          <div>
+            <p class="store-kicker">QUẢN LÝ KHO</p>
+            <h2>Chỉnh sửa sản phẩm</h2>
+          </div>
+          <button type="button" id="closeEditProduct" aria-label="Đóng">×</button>
+        </div>
+        <input type="hidden" name="id" id="editProductId">
+        <label>Tên sản phẩm<input name="name" id="editProductName" required maxlength="120"></label>
+        <label>Nguồn hàng<input name="brand" id="editProductBrand" required maxlength="50"></label>
+        <label>Phân loại
+          <select name="category" id="editProductCategory">
+            <option value="vegetables">Rau củ</option>
+            <option value="fruits">Trái cây</option>
+            <option value="meat">Thịt & trứng</option>
+            <option value="seafood">Hải sản</option>
+            <option value="dairy">Sữa & chế phẩm</option>
+            <option value="pantry">Thực phẩm khô</option>
+          </select>
+        </label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <label>Giá bán (VNĐ)<input name="price" id="editProductPrice" type="number" min="0" step="any" required></label>
+          <label>Giá niêm yết (VNĐ)<input name="originalPrice" id="editProductOriginalPrice" type="number" min="0" step="any"></label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <label>Số lượng tồn<input name="stock" id="editProductStock" type="number" min="0" max="10000" step="1" required></label>
+          <label>Quy cách<input name="unit" id="editProductUnit" maxlength="40"></label>
+        </div>
+        <label>Xuất xứ<input name="origin" id="editProductOrigin" maxlength="100"></label>
+        <label>Mô tả ngắn<input name="description" id="editProductDescription" maxlength="200"></label>
+        <label>Ảnh sản phẩm (URL)<input name="image" id="editProductImage" type="url" maxlength="500"></label>
+        <label>Nhãn sản phẩm<input name="badge" id="editProductBadge" maxlength="60"></label>
+        <div style="display: flex; gap: 10px; margin-top: 18px;">
+          <button class="primary-button" type="submit" style="flex: 1;">Lưu thay đổi</button>
+          <button class="outline-button" type="button" id="cancelEditProduct">Hủy</button>
+        </div>
+      </form>
+    </dialog>
     <div class="toast" id="toast" role="status"></div>
     <script src="/admin.js"></script>
   </body>
